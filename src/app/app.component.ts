@@ -21,13 +21,68 @@ interface SparkleParticle {
 }
 
 export interface LoveChapterPage {
-  id: 'home' | 'memories' | 'reasons' | 'letters' | 'shayari' | 'coupons' | 'games' | 'proposal';
+  id: 'home' | 'memories' | 'reasons' | 'letters' | 'shayari' | 'coupons' | 'games' | 'expressions' | 'proposal';
   chapterLabel: string;
   title: string;
   navTitle: string;
   icon: string;
   description: string;
   badge?: string;
+}
+
+export interface LoveConfessionVoice {
+  id: string;
+  title: string;
+  hindiTitle: string;
+  subtitle: string;
+  hindiQuote: string;
+  englishBody: string;
+  emotionTag: string;
+  icon: string;
+  durationEstimate: string;
+}
+
+export interface SacredVow {
+  id: number;
+  title: string;
+  hindiTitle: string;
+  icon: string;
+  promiseText: string;
+  hindiText: string;
+  isSealed: boolean;
+  sealedDate?: string;
+}
+
+export interface OpenWhenEnvelope {
+  id: string;
+  icon: string;
+  label: string;
+  hindiLabel: string;
+  greeting: string;
+  content: string;
+  hindiAdvice: string;
+  actionType: 'hug' | 'kisses' | 'tea' | 'melody' | 'laugh' | 'calm' | 'pout' | 'dream';
+  actionLabel: string;
+  badge: string;
+}
+
+export interface LoveAffirmation {
+  id: number;
+  quote: string;
+  hindiQuote: string;
+  category: string;
+  emoji: string;
+}
+
+export interface LoveStickyNote {
+  id: string;
+  author: string;
+  message: string;
+  date: string;
+  color: 'pink' | 'peach' | 'lavender' | 'mint' | 'yellow';
+  likes: number;
+  rotation: number;
+  isCustom?: boolean;
 }
 
 @Component({
@@ -364,6 +419,15 @@ export class AppComponent implements OnInit, OnDestroy {
       badge: '18 Games'
     },
     {
+      id: 'expressions',
+      chapterLabel: 'Chapter 7',
+      title: 'Expressions of Love (इश्क़-ए-बयान)',
+      navTitle: 'Expressions 💖🎙️',
+      icon: '🎙️',
+      description: 'Spoken love confessions, 7 sacred vows, open-when emotional envelopes & interactive love wall',
+      badge: 'Deep Vows & Voice'
+    },
+    {
       id: 'proposal',
       chapterLabel: 'Grand Finale',
       title: 'The Big Question',
@@ -374,7 +438,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   ];
 
-  public currentPage: 'home' | 'memories' | 'reasons' | 'letters' | 'shayari' | 'coupons' | 'games' | 'proposal' = 'home';
+  public currentPage: 'home' | 'memories' | 'reasons' | 'letters' | 'shayari' | 'coupons' | 'games' | 'expressions' | 'proposal' = 'home';
   private hashListener?: () => void;
 
   public get currentPageIndex(): number {
@@ -461,7 +525,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  public normalizePageId(id: string): 'home' | 'memories' | 'reasons' | 'letters' | 'shayari' | 'coupons' | 'games' | 'proposal' {
+  public normalizePageId(id: string): 'home' | 'memories' | 'reasons' | 'letters' | 'shayari' | 'coupons' | 'games' | 'expressions' | 'proposal' {
     const clean = (id || '').replace(/^#/, '').toLowerCase().trim();
     if (clean === 'story' || clean === 'memories') return 'memories';
     if (clean === 'reasons') return 'reasons';
@@ -469,6 +533,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (clean === 'shayari' || clean === 'poetry') return 'shayari';
     if (clean === 'coupons' || clean === 'coupon') return 'coupons';
     if (clean === 'playground' || clean === 'games' || clean === 'arcade') return 'games';
+    if (clean === 'expressions' || clean === 'vows' || clean === 'confessions' || clean === 'voice') return 'expressions';
     if (clean === 'proposal' || clean === 'question') return 'proposal';
     return 'home';
   }
@@ -649,6 +714,17 @@ export class AppComponent implements OnInit, OnDestroy {
       if (favShayaris) this.favoriteShayariIds = JSON.parse(favShayaris);
       const savedTheme = localStorage.getItem('love_ambient_theme') as any;
       if (savedTheme) this.ambientTheme = savedTheme;
+      const sealedVows = localStorage.getItem('love_sealed_vows');
+      if (sealedVows) {
+        const ids: number[] = JSON.parse(sealedVows);
+        this.sacredVows.forEach(v => {
+          if (ids.includes(v.id)) v.isSealed = true;
+        });
+      }
+      const savedNotes = localStorage.getItem('love_sticky_notes');
+      if (savedNotes) {
+        this.stickyNotesList = JSON.parse(savedNotes);
+      }
     } catch (e) {}
 
     this.generateBackgroundHearts();
@@ -739,6 +815,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     if (this.kissSpawnInterval) {
       clearInterval(this.kissSpawnInterval);
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
     }
   }
 
@@ -2143,8 +2222,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.audio.playDodgeSound();
     this.noEscapeCount++;
 
-    // Increment YES button size so it becomes massive and inviting
-    this.yesScale = Math.min(2.5, this.yesScale + 0.16);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 600;
+
+    // Increment YES button size so it becomes massive and inviting without overflowing screen
+    const maxScale = isMobile ? 1.6 : 2.3;
+    this.yesScale = Math.min(maxScale, this.yesScale + 0.12);
 
     // Pick runaway message
     const msgIndex = Math.min(this.noEscapeCount, this.runawayResponses.length - 1);
@@ -2156,17 +2238,17 @@ export class AppComponent implements OnInit, OnDestroy {
       yesButtonScale: Number(this.yesScale.toFixed(2))
     });
 
-    // Compute random bounded viewport coordinates tailored for mobile screens (Samsung One UI)
-    const btnWidth = 130;
-    const btnHeight = 54;
+    // Compute random bounded viewport coordinates tailored for mobile screens
+    const btnWidth = isMobile ? 110 : 130;
+    const btnHeight = isMobile ? 46 : 54;
     const padding = 16;
 
     const viewportW = Math.max(window.innerWidth || 360, 320);
     const viewportH = Math.max(window.innerHeight || 640, 480);
 
-    // Reserve safe headroom for top nav/notch (90px) and bottom navigation/gesture pill (80px)
-    const topSafe = 90;
-    const bottomSafe = 80;
+    // Reserve safe headroom for top nav/notch (80px) and bottom navigation/gesture pill (75px)
+    const topSafe = 85;
+    const bottomSafe = 75;
 
     const maxX = Math.max(padding, viewportW - btnWidth - padding);
     const maxY = Math.max(topSafe + 20, viewportH - btnHeight - bottomSafe);
@@ -2197,6 +2279,10 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     // Trigger full multi-angle confetti explosion
+    this.launchGrandConfettiCelebration();
+  }
+
+  public launchConfetti(): void {
     this.launchGrandConfettiCelebration();
   }
 
@@ -2707,6 +2793,625 @@ function recordEntry(data) {
     }
   }
 
+  // =========================================================================
+  // CHAPTER 7: EXPRESSIONS OF LOVE (इश्क़-ए-बयान)
+  // =========================================================================
+  public activeExpressionTab: 'confessions' | 'vows' | 'openwhen' | 'jar' | 'wall' = 'confessions';
+
+  public setExpressionTab(tab: 'confessions' | 'vows' | 'openwhen' | 'jar' | 'wall'): void {
+    this.activeExpressionTab = tab;
+    this.audio.playCutePop();
+    this.stopConfessionVoice();
+    this.tracker.logAction('letter', `Switched Expression Tab to: ${tab}`);
+  }
+
+  // --- SUB-FEATURE 1: Spoken Love Confessions (Voice of My Soul) ---
+  public activeConfessionId: string = 'first-sight';
+  public isSpeakingConfession: boolean = false;
+  private speechUtterance: any = null;
+
+  public readonly confessionsList: LoveConfessionVoice[] = [
+    {
+      id: 'first-sight',
+      title: 'The Instant My Life Changed',
+      hindiTitle: 'पहली नज़र का जादू (Pehli Nazar)',
+      subtitle: 'The moment my heart recognized you',
+      hindiQuote: 'जब मैंने पहली बार तुम्हें देखा, तो लगा जैसे बरसों से भटका हुआ मुसाफ़िर अपनी मंज़िल पर पहुँच गया हो।',
+      englishBody: 'From the very first day you entered my world, everything made sense. You became my favorite notification, my sweetest morning thought, and the prayer I didn\'t know I had been whispering. Loving you is the easiest, purest decision I have ever made in my entire life.',
+      emotionTag: 'Deep Romance 🌹',
+      icon: '✨',
+      durationEstimate: '45s'
+    },
+    {
+      id: 'when-sad',
+      title: 'When The World Feels Heavy',
+      hindiTitle: 'जब दिल भारी हो (Safe Haven)',
+      subtitle: 'A warm promise for your tough days',
+      hindiQuote: 'चाहे दुनिया कितनी भी सख़्त हो जाए, मेरी बाहें हमेशा तुम्हारा सबसे महफ़ूज़ और सुकून भरा घर रहेंगी।',
+      englishBody: 'Whenever life overwhelms you, when tears threaten to fall, remember that you never have to carry the burden alone. Come rest your head on my shoulder. I will listen without judging, hold your hands tight, and remind you how fiercely, endlessly you are loved.',
+      emotionTag: 'Comfort & Sanctuary 🕊️',
+      icon: '🤗',
+      durationEstimate: '50s'
+    },
+    {
+      id: 'distance',
+      title: 'Miles Mean Nothing to My Heart',
+      hindiTitle: 'फ़ासलों से परे मोहब्बत (Across The Miles)',
+      subtitle: 'Why our distance only strengthens us',
+      hindiQuote: 'फ़ासले सिर्फ़ शहरों के हैं, दिलों के नहीं; जब भी चाँद को देखता हूँ, तुम्हारी ही याद मुस्कुराती है।',
+      englishBody: 'Every kilometer between us is just proof of how deep this connection runs. True love is not measured by physical proximity, but by how close you feel when you close your eyes. You are living inside my every heartbeat, every single second.',
+      emotionTag: 'Long Distance Devotion 🌙',
+      icon: '🌍',
+      durationEstimate: '48s'
+    },
+    {
+      id: 'little-things',
+      title: 'Your Adorable Little Habits',
+      hindiTitle: 'तुम्हारी मासूम शरारतें (Cute Adoration)',
+      subtitle: 'All the tiny details I cherish about you',
+      hindiQuote: 'तुम्हारा बचपना, वो नटखट गुस्सा, और बात-बात पर मुँह फुलाना — यही तो मेरी जान ले लेता है।',
+      englishBody: 'I love the way your eyes sparkle when you tell an excited story. I love how cute you look when you pout, the sweet sleepy voice you have at midnight, and the innocent warmth you radiate. You are magic, wrapped in human form.',
+      emotionTag: 'Playful Adoration 🥰',
+      icon: '🌸',
+      durationEstimate: '42s'
+    },
+    {
+      id: 'growing-old',
+      title: 'Wrinkles, Grey Hair & Porch Swings',
+      hindiTitle: 'बुढ़ापे तक का साथ (Growing Old Together)',
+      subtitle: 'Sixty years of holding your hand',
+      hindiQuote: 'मुझे सिर्फ़ तुम्हारी जवानी से इश्क़ नहीं, तुम्हारी झुर्रियों और सफ़ेद बालों तक तुम्हारा हाथ थामना है।',
+      englishBody: 'I don’t just want romance today; I want 60 years of warm cups of tea, quiet morning walks, and laugh lines carved by a lifetime of smiles. When we are old and fragile, I will still look into your eyes and see the girl who stole my soul.',
+      emotionTag: 'Lifetime Vow 💍',
+      icon: '👵👴',
+      durationEstimate: '52s'
+    },
+    {
+      id: 'always-yours',
+      title: 'You Will Always Be Enough',
+      hindiTitle: 'मेरी पहली और आख़िरी पसंद (Forever Yours)',
+      subtitle: 'My permanent, unbreakable confession',
+      hindiQuote: 'तुम मेरी ज़िंदगी की पहली पसंद भी हो, और मेरी हर दुआ का आख़िरी जवाब भी।',
+      englishBody: 'You are not a temporary chapter or a fleeting season for me. You are my home, my anchor, and my eternal sanctuary. In this life and in every lifetime after, my soul will always search for you and only you.',
+      emotionTag: 'Eternity Promise ✨',
+      icon: '💎',
+      durationEstimate: '46s'
+    }
+  ];
+
+  public get currentConfession(): LoveConfessionVoice {
+    return this.confessionsList.find(c => c.id === this.activeConfessionId) || this.confessionsList[0];
+  }
+
+  public selectConfession(id: string): void {
+    this.stopConfessionVoice();
+    this.activeConfessionId = id;
+    this.audio.playCutePop();
+  }
+
+  public playConfessionVoice(c: LoveConfessionVoice): void {
+    if (this.isSpeakingConfession) {
+      this.stopConfessionVoice();
+      return;
+    }
+
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const textToSpeak = `${c.title}. ${c.hindiQuote} ${c.englishBody}`;
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.rate = 0.88;
+        utterance.pitch = 1.05;
+
+        const voices = window.speechSynthesis.getVoices();
+        const romanticVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google')))
+                           || voices.find(v => v.lang.startsWith('en'));
+        if (romanticVoice) {
+          utterance.voice = romanticVoice;
+        }
+
+        utterance.onstart = () => {
+          this.isSpeakingConfession = true;
+          this.audio.playHarpChime();
+        };
+
+        utterance.onend = () => {
+          this.isSpeakingConfession = false;
+        };
+
+        utterance.onerror = () => {
+          this.isSpeakingConfession = false;
+        };
+
+        this.speechUtterance = utterance;
+        window.speechSynthesis.speak(utterance);
+        this.showToast(`Listening to voice confession: "${c.title}" 🎙️💖`);
+        this.tracker.logAction('letter', `Listened to Voice Confession: ${c.title} 🎙️`);
+        return;
+      } catch (e) {}
+    }
+
+    // Fallback if speech synthesis is unavailable
+    this.isSpeakingConfession = true;
+    this.audio.playHarpChime();
+    this.showToast(`Voice confession: "${c.title}" 💖`);
+    setTimeout(() => {
+      this.isSpeakingConfession = false;
+    }, 4000);
+  }
+
+  public stopConfessionVoice(): void {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
+    this.isSpeakingConfession = false;
+  }
+
+  public copyConfessionText(c: LoveConfessionVoice): void {
+    const text = `🌹 ${c.title}\n\n"${c.hindiQuote}"\n\n${c.englishBody}\n\n— From My Heart to Yours ❤️`;
+    this.tracker.copyToClipboard(text).then((ok) => {
+      if (ok) {
+        this.showToast('Love confession copied to clipboard! 📜❤️');
+        this.launchHeartBurst();
+        this.tracker.logAction('letter', `Copied Confession: ${c.title} 📋`);
+      }
+    });
+  }
+
+  // --- SUB-FEATURE 2: The 7 Sacred Love Vows Ceremony ---
+  public sacredVows: SacredVow[] = [
+    {
+      id: 1,
+      title: 'The Vow of Safe Haven',
+      hindiTitle: 'सुकून और हिफ़ाज़त का वचन',
+      icon: '🏡',
+      promiseText: 'I vow to always provide a safe harbor for your heart. You will never have to hide your tears, mask your fears, or face a painful day alone.',
+      hindiText: 'चाहे हालात कितने भी मुश्किल हों, मेरी बाहें हमेशा तुम्हारा सबसे महफ़ूज़ आशियाना रहेंगी।',
+      isSealed: false
+    },
+    {
+      id: 2,
+      title: 'The Vow of Unshakable Loyalty',
+      hindiTitle: 'सच्चाई और वफ़ा का वचन',
+      icon: '🔒',
+      promiseText: 'I vow absolute fidelity and honest transparency. In a crowded world of billions, my heart, eyes, and devotion belong strictly and completely to you.',
+      hindiText: 'करोड़ों की इस दुनिया में, मेरी हर एक नज़र और हर एक धड़कन सिर्फ़ तुम्हारे नाम रहेगी।',
+      isSealed: false
+    },
+    {
+      id: 3,
+      title: 'The Vow of Cheering Your Dreams',
+      hindiTitle: 'सपनों और उड़ान का वचन',
+      icon: '🚀',
+      promiseText: 'I vow to be your biggest cheerleader. I will guard your ambitions, celebrate every small milestone, and encourage you to fly as high as your wings can reach.',
+      hindiText: 'तुम्हारे हर ख़्वाब को पंख दूँगा और तुम्हारी हर कामयाबी पर सबसे आगे खड़े होकर गर्व से तालियाँ बजाऊँगा।',
+      isSealed: false
+    },
+    {
+      id: 4,
+      title: 'The Vow of Playful Laughter',
+      hindiTitle: 'मुस्कुराहट और शरारत का वचन',
+      icon: '🎈',
+      promiseText: 'I vow to keep our childlike joy alive. I promise to tease you when you pout, make silly faces to make you giggle, and ensure our days are filled with genuine laughter.',
+      hindiText: 'तुम्हारे रूठने पर मनाना और तुम्हारी आँखों में वो नटखट चमक कभी कम न होने देना — ये मेरा पक्का वादा है।',
+      isSealed: false
+    },
+    {
+      id: 5,
+      title: 'The Vow of Patient Understanding',
+      hindiTitle: 'सब्र और समझदारी का वचन',
+      icon: '🕊️',
+      promiseText: 'I vow to choose understanding over ego. When misunderstandings happen, I will listen calmly, speak with kindness, and never let pride stand between our hearts.',
+      hindiText: 'झगड़े हो सकते हैं पर दूरियाँ कभी नहीं आएँगी। अना (Ego) को पीछे रखकर हमेशा तुम्हारे दिल की बात समझूँगा।',
+      isSealed: false
+    },
+    {
+      id: 6,
+      title: 'The Vow of Tender Care & Warmth',
+      hindiTitle: 'देखभाल और खिदमत का वचन',
+      icon: '🍵',
+      promiseText: 'I vow to care for your health and comfort. I will make you warm tea when you are worn out, remind you to eat on busy days, and wrap you in blankets of gentle warmth.',
+      hindiText: 'जब तुम थक जाओगी, तुम्हारा सहारा बनूँगा; जब बीमार होगी, तुम्हारी दवा और दुआ दोनों बनूँगा।',
+      isSealed: false
+    },
+    {
+      id: 7,
+      title: 'The Vow of Everyday Choice',
+      hindiTitle: 'हर रोज़ तुम्हें चुनने का वचन',
+      icon: '💍',
+      promiseText: 'I vow to wake up every morning and choose you all over again, with conscious love, deep gratitude, and unbreakable dedication until my final breath.',
+      hindiText: 'ज़िंदगी के हर मोड़ पर, हर सुबह और हर शाम, सिर्फ़ और सिर्फ़ तुम्हें ही चुनूँगा — आज, कल और हमेशा।',
+      isSealed: false
+    }
+  ];
+
+  public get sealedVowsCount(): number {
+    return this.sacredVows.filter(v => v.isSealed).length;
+  }
+
+  public get allVowsSealed(): boolean {
+    return this.sealedVowsCount === this.sacredVows.length;
+  }
+
+  public sealSacredVow(vow: SacredVow): void {
+    if (vow.isSealed) return;
+    vow.isSealed = true;
+    vow.sealedDate = new Date().toLocaleDateString();
+    this.audio.playMagicSparkle();
+    this.launchHeartBurst();
+    this.showToast(`Vow #${vow.id} Sealed with Love! ❤️💍`);
+
+    try {
+      const sealedIds = this.sacredVows.filter(v => v.isSealed).map(v => v.id);
+      localStorage.setItem('love_sealed_vows', JSON.stringify(sealedIds));
+    } catch (e) {}
+
+    this.tracker.logAction('letter', `Sealed Sacred Vow #${vow.id}: ${vow.title} 💍`, {
+      vowId: vow.id,
+      title: vow.title
+    });
+
+    if (this.allVowsSealed) {
+      setTimeout(() => {
+        this.launchConfetti();
+        this.audio.playCelebrationFanfare();
+        this.showToast('🎉 All 7 Sacred Vows Sealed for Eternity! You unlocked the Covenant Certificate! 📜💍');
+      }, 500);
+    }
+  }
+
+  public resetSealedVows(): void {
+    this.sacredVows.forEach(v => v.isSealed = false);
+    try {
+      localStorage.removeItem('love_sealed_vows');
+    } catch (e) {}
+    this.audio.playCutePop();
+    this.showToast('All Vows reset — Ready to be sealed anew! 💍');
+  }
+
+  // --- SUB-FEATURE 3: "Open When..." Emotional Envelopes ---
+  public activeOpenWhen: OpenWhenEnvelope | null = null;
+  public showWarmHugOverlay: boolean = false;
+
+  public readonly openWhenEnvelopes: OpenWhenEnvelope[] = [
+    {
+      id: 'miss-me',
+      label: 'Open When You Miss Me Terribly',
+      hindiLabel: 'जब मेरी बहुत याद आ रही हो 🥺',
+      icon: '🥺',
+      badge: 'Midnight Longing',
+      greeting: 'My Sweet Angel,',
+      content: 'Close your eyes for five seconds and take a deep, slow breath. Can you feel that gentle warmth right in the center of your chest? That is me holding you across the miles. Distance only keeps our bodies apart, but my heart is beating right inside yours. Pick up your phone and text me "❤️" — no matter what I am doing, I will reply with love.',
+      hindiAdvice: 'आँखें बंद करो और दिल पर हाथ रखो, मैं वहीं हूँ, हर धड़कन में।',
+      actionType: 'hug',
+      actionLabel: '🤗 Trigger Warm Virtual Hug'
+    },
+    {
+      id: 'bad-day',
+      label: 'Open When You Had a Tough, Exhausting Day',
+      hindiLabel: 'जब दिन बहुत थका देने वाला और मुश्किल बीता हो 🌧️',
+      icon: '🌧️',
+      badge: 'Emotional Comfort',
+      greeting: 'My Brave Girl,',
+      content: 'First of all: kick off your shoes, drink a glass of water, and leave the stress of the day at the door. You fought hard today and you did the best you could. One rough day does not define your amazing spirit. You are so resilient, smart, and precious to me. Lie down, wrap yourself in your softest blanket, and let me pamper you.',
+      hindiAdvice: 'आज का दिन गुज़र चुका है, अब सब भूलकर आराम करो। मैं हूँ ना तुम्हारे साथ।',
+      actionType: 'tea',
+      actionLabel: '🍵 Send Warm Chamomile Tea & Kisses'
+    },
+    {
+      id: 'insomnia',
+      label: 'Open When You Can’t Fall Asleep at 2 AM',
+      hindiLabel: 'जब रात के 2 बजे नींद न आ रही हो 🌙',
+      icon: '🌙',
+      badge: 'Night Peace',
+      greeting: 'My Night Owl,',
+      content: 'Is your mind racing with a million thoughts? Let me tuck all those worries into a little box and take them away. Imagine my fingers gently running through your hair, tracing your forehead, whispering soft words until your eyelids grow delightfully heavy. You are completely safe and loved. Let the quiet night cradle you into sweet dreams.',
+      hindiAdvice: 'फ़िक्र छोड़ दो, अपने तकिए को गले लगाओ और सोचो मैं तुम्हारे पास ही हूँ।',
+      actionType: 'melody',
+      actionLabel: '🎶 Play Midnight Sleep Melody'
+    },
+    {
+      id: 'mad-at-me',
+      label: 'Open When You’re Mad or Frustrated With Me',
+      hindiLabel: 'जब मुझसे नाराज़ या गुस्सा हो 😤',
+      icon: '😤',
+      badge: 'Gentle Truce',
+      greeting: 'My Lovely Boss,',
+      content: 'If I said something silly, was late, or acted like a fool — I am truly, deeply sorry. You know how clumsy I can be, but my heart never ever wants to hurt yours. Take all the time you need to cool down, but please don’t forget that you are my favorite person on earth. I am holding both my ears and giving you my goofiest puppy-dog eyes right now!',
+      hindiAdvice: 'कान पकड़कर माफ़ी माँग रहा हूँ! अब जल्दी से वो प्यारी सी मुस्कान वापस लाओ।',
+      actionType: 'pout',
+      actionLabel: '🕊️ Forgive This Silly Boy with a Smile'
+    },
+    {
+      id: 'insecure',
+      label: 'Open When You Doubt How Gorgeous You Are',
+      hindiLabel: 'जब खुद की खूबसूरती पर ज़रा सा भी शक हो 👸',
+      icon: '👸',
+      badge: 'Royal Beauty',
+      greeting: 'To The Most Stunning Woman in the Universe,',
+      content: 'Stop scrolling and listen to me: God truly took extra time sculpting your smile, the sparkle in your eyes, and the golden purity of your soul. You look breathtaking in fancy dresses, and you look even more breathtaking with messy morning hair in oversized pajamas. You are art, inside and out. Never let anyone or anything make you feel otherwise.',
+      hindiAdvice: 'तुम चाँद जैसी नहीं हो, चाँद भी तुम्हारे हुस्न से रश्क करता है!',
+      actionType: 'kisses',
+      actionLabel: '💋 Shower with 1000 Compliments & Kisses'
+    },
+    {
+      id: 'laugh',
+      label: 'Open When You Need an Instant Giggle',
+      hindiLabel: 'जब तुरंत एक खिलखिलाती हँसी चाहिए हो 😂',
+      icon: '😂',
+      badge: 'Funny Sparks',
+      greeting: 'My Partner in Crime,',
+      content: 'Quick reminder: I love you so much that even if you ate the last slice of pizza, stole all the blankets, and made me watch three romantic comedies in a row, I would still look at you like you are the smartest investment of my life! Also, remember the funny voice notes we exchange? You are the only person who matches my crazy level perfectly.',
+      hindiAdvice: 'तुम मेरी ज़िंदगी की वो जोकर हो जिसके बिना सर्कस अधूरा है! 😉',
+      actionType: 'laugh',
+      actionLabel: '🎉 Launch Confetti & Tickles'
+    },
+    {
+      id: 'overthinking',
+      label: 'Open When You’re Overthinking & Anxious',
+      hindiLabel: 'जब दिमाग में बहुत उलझन और बेचैनी हो 💭',
+      icon: '💭',
+      badge: 'Grounding Peace',
+      greeting: 'My Precious Soul,',
+      content: 'Breathe in for 4 seconds... hold for 4 seconds... breathe out for 4 seconds. Right here, right now, everything is okay. Overthinking creates storms that don’t exist. Whatever the future holds, we will face it together as a team. I am not going anywhere. You are deeply anchored in my love, and nothing can shake our foundation.',
+      hindiAdvice: 'ज़्यादा मत सोचो, तुम्हारी हर उलझन सुलझाने के लिए मैं तुम्हारे साथ खड़ा हूँ।',
+      actionType: 'calm',
+      actionLabel: '🌊 Calm Mind & Heart Pulses'
+    },
+    {
+      id: 'future-home',
+      label: 'Open When You Want to Dream About Our Future',
+      hindiLabel: 'जब हमारे आने वाले प्यारे कल के ख़्वाब देखने हों 🏡',
+      icon: '🏡',
+      badge: 'Forever Dreams',
+      greeting: 'My Future Wifey,',
+      content: 'Picture this: our cozy home with warm fairy lights. The aroma of morning coffee in the kitchen. Plants on the balcony. Rain tapping on the window while we sit together on a plush sofa, wrapped in one blanket, talking about everything and nothing. That day is coming, and every step we take today brings us closer to that cozy paradise.',
+      hindiAdvice: 'वो दिन बहुत करीब है जब हर सुबह की पहली नज़र सिर्फ़ तुम्हारे चेहरे पर होगी।',
+      actionType: 'dream',
+      actionLabel: '✨ Build Our Future Dream'
+    }
+  ];
+
+  public openEnvelope(env: OpenWhenEnvelope): void {
+    this.activeOpenWhen = env;
+    this.audio.playHarpChime();
+    this.launchHeartBurst();
+    this.tracker.logAction('letter', `Opened Envelope: "${env.label}" 💌`, {
+      envelopeId: env.id,
+      label: env.label
+    });
+  }
+
+  public closeEnvelopeModal(): void {
+    this.activeOpenWhen = null;
+    this.audio.playCutePop();
+  }
+
+  public triggerEnvelopeAction(env: OpenWhenEnvelope): void {
+    switch (env.actionType) {
+      case 'hug':
+        this.showWarmHugOverlay = true;
+        this.audio.playMagicSparkle();
+        this.showToast('Sending a warm, tight virtual hug across the distance! 🤗💖');
+        setTimeout(() => {
+          this.showWarmHugOverlay = false;
+        }, 3500);
+        break;
+      case 'tea':
+        this.launchHeartBurst();
+        this.audio.playCutePop();
+        this.showToast('Virtual chamomile tea brewed & 100 forehead kisses delivered! 🍵💋');
+        break;
+      case 'melody':
+        this.audio.playHarpChime();
+        this.showToast('Playing soft starlight lullaby notes... sweet dreams! 🎶🌙');
+        break;
+      case 'pout':
+        this.launchConfetti();
+        this.audio.playMagicSparkle();
+        this.showToast('Forgiven! Boyfriend promises to bring you chocolates! 🍫❤️');
+        break;
+      case 'kisses':
+        this.launchHeartBurst();
+        this.audio.playMagicSparkle();
+        this.showToast('1000 Kisses sent! You are the prettiest girl alive! 💋👑');
+        break;
+      case 'laugh':
+        this.launchConfetti();
+        this.audio.playCutePop();
+        this.showToast('Tickle attack launched! Smile wide! 😂🎉');
+        break;
+      case 'calm':
+        this.audio.playHarpChime();
+        this.showToast('You are safe. Take a deep breath. I am with you always. 🌊🤍');
+        break;
+      case 'dream':
+        this.launchHeartBurst();
+        this.audio.playMagicSparkle();
+        this.showToast('Our dream home is coming soon, my love! 🏡✨');
+        break;
+    }
+    this.tracker.logAction('letter', `Triggered Action for Envelope: ${env.label} (${env.actionType}) 💖`);
+  }
+
+  public closeWarmHugOverlay(): void {
+    this.showWarmHugOverlay = false;
+  }
+
+  // --- SUB-FEATURE 4: Love Affirmation Jar ---
+  public isJarShaking: boolean = false;
+  public isAffirmationPulled: boolean = false;
+  public currentAffirmation: LoveAffirmation | null = null;
+
+  public readonly affirmationsList: LoveAffirmation[] = [
+    { id: 1, emoji: '🌟', category: 'Soulmate', quote: 'You are the calm in my chaos and the warmth in my cold days.', hindiQuote: 'तुम मेरी बेचैनियों का सुकून और मेरी तन्हाई का सबसे खूबसूरत साथ हो।' },
+    { id: 2, emoji: '💫', category: 'Priority', quote: 'No matter how busy the world gets, you are my first thought and my last prayer.', hindiQuote: 'दुनिया चाहे जितनी मसरूफ हो जाए, तुम हमेशा मेरी पहली प्राथमिकता रहोगी।' },
+    { id: 3, emoji: '❤️', category: 'Pure Love', quote: 'My love for you doesn’t need conditions, reasons, or seasons. It just is, and always will be.', hindiQuote: 'मेरा प्यार किसी शर्त का मोहताज नहीं, ये कल भी था और हमेशा रहेगा।' },
+    { id: 4, emoji: '📱', category: 'Distance', quote: 'Looking at my phone screen and smiling like an idiot is all your fault.', hindiQuote: 'फ़ोन की स्क्रीन देखकर पागलों की तरह मुस्कुराना — ये सब तुम्हारा असर है।' },
+    { id: 5, emoji: '👑', category: 'Precious', quote: 'If I had to live my life all over again, I would find you sooner so I could love you longer.', hindiQuote: 'अगर ज़िंदगी दोबारा मिले, तो तुम्हें और पहले ढूँढूँगा ताकि और ज़्यादा प्यार कर सकूँ।' },
+    { id: 6, emoji: '🕊️', category: 'Safe Harbor', quote: 'In your eyes, I found my reflection; in your heart, I found my forever home.', hindiQuote: 'तुम्हारी आँखों में खुद को देखा, और तुम्हारे दिल में अपना आशियाना पा लिया।' },
+    { id: 7, emoji: '✨', category: 'Magic', quote: 'Every love song I ever heard suddenly made complete sense the day you smiled at me.', hindiQuote: 'दुनिया का हर रोमांटिक गाना तुम्हारे मुस्कुराने के बाद ही समझ में आया।' },
+    { id: 8, emoji: '🥰', category: 'Sweet Tooth', quote: 'You are sweeter than hot chocolate on a rainy Sunday morning.', hindiQuote: 'बारिश की सुबह वाली गर्म चाय और मीठी चाशनी से भी ज़्यादा प्यारी हो तुम।' },
+    { id: 9, emoji: '🌙', category: 'Midnight', quote: 'The moon is beautiful tonight, but it will never match the glow of your soul.', hindiQuote: 'चाँद खूबसूरत ज़रूर है, पर तुम्हारी सादगी और नूर के आगे फीका है।' },
+    { id: 10, emoji: '💍', category: 'Destiny', quote: 'Meeting you was fate; becoming your friend was a choice; but falling in love with you was utterly beyond my control.', hindiQuote: 'तुमसे मिलना तक़दीर थी, पर तुमसे बेपनाह मोहब्बत होना मेरी रूह की मर्ज़ी थी।' },
+    { id: 11, emoji: '🌸', category: 'Grace', quote: 'Your kindness is my favorite thing about you. It softens the entire world around you.', hindiQuote: 'तुम्हारी सादगी और मासूमियत इस दुनिया की सबसे अनमोल दौलत है।' },
+    { id: 12, emoji: '🛡️', category: 'Protection', quote: 'I will stand between you and the storms of life, today, tomorrow, and forever.', hindiQuote: 'ज़िंदगी के हर तूफ़ान के सामने मैं तुम्हारी ढाल बनकर खड़ा रहूँगा।' }
+  ];
+
+  public pullAffirmationFromJar(): void {
+    if (this.isJarShaking) return;
+    this.isJarShaking = true;
+    this.audio.playCutePop();
+
+    setTimeout(() => {
+      const randomIdx = Math.floor(Math.random() * this.affirmationsList.length);
+      this.currentAffirmation = this.affirmationsList[randomIdx];
+      this.isJarShaking = false;
+      this.isAffirmationPulled = true;
+      this.audio.playMagicSparkle();
+      this.launchHeartBurst();
+      this.showToast('Pulled a sweet affirmation from the Love Jar! 🫙✨');
+      this.tracker.logAction('letter', `Pulled Love Affirmation: #${this.currentAffirmation.id} 🫙`);
+    }, 700);
+  }
+
+  public copyAffirmation(aff: LoveAffirmation): void {
+    const text = `"${aff.quote}"\n\n"${aff.hindiQuote}"\n\n— Daily Love Affirmation ❤️🫙`;
+    this.tracker.copyToClipboard(text).then((ok) => {
+      if (ok) {
+        this.showToast('Affirmation copied to clipboard! 📋✨');
+        this.tracker.logAction('letter', 'Copied Affirmation Text 📋');
+      }
+    });
+  }
+
+  public shareAffirmationWhatsApp(aff: LoveAffirmation): void {
+    const text = encodeURIComponent(`"${aff.quote}"\n\n"${aff.hindiQuote}"\n\n— From My Heart to Yours ❤️✨`);
+    const url = `https://api.whatsapp.com/send?text=${text}`;
+    window.open(url, '_blank');
+    this.showToast('Sharing affirmation to WhatsApp! 💬');
+    this.tracker.logAction('letter', 'Shared Affirmation on WhatsApp 💬');
+  }
+
+  // --- SUB-FEATURE 5: Wall of Love (Sticky Confessions Board) ---
+  public showAddNoteModal: boolean = false;
+  public newNoteAuthor: string = '';
+  public newNoteMessage: string = '';
+  public newNoteColor: 'pink' | 'peach' | 'lavender' | 'mint' | 'yellow' = 'pink';
+
+  public stickyNotesList: LoveStickyNote[] = [
+    {
+      id: 'note-1',
+      author: 'With All My Heart',
+      message: 'Reminder: You are the best thing that ever happened to me on 24 Feb 2026. Never forget that! 💕',
+      date: '24 Feb 2026',
+      color: 'pink',
+      likes: 12,
+      rotation: -2,
+      isCustom: false
+    },
+    {
+      id: 'note-2',
+      author: 'With All My Heart',
+      message: 'Can’t wait for the day we never have to say goodbye over phone calls and video screens. 🏡✨',
+      date: 'Forever',
+      color: 'peach',
+      likes: 18,
+      rotation: 3,
+      isCustom: false
+    },
+    {
+      id: 'note-3',
+      author: 'With All My Heart',
+      message: 'Thank you for choosing me every single day. I promise to make you the happiest girl on earth. 🥺❤️',
+      date: 'Always',
+      color: 'lavender',
+      likes: 24,
+      rotation: -1,
+      isCustom: false
+    },
+    {
+      id: 'note-4',
+      author: 'With All My Heart',
+      message: 'Whenever you pout or get cute angry, my heart does backflips! Keep smiling my princess! 👑🥰',
+      date: 'Everyday',
+      color: 'yellow',
+      likes: 9,
+      rotation: 2,
+      isCustom: false
+    }
+  ];
+
+  public openAddNoteModal(): void {
+    this.newNoteAuthor = this.story.config.girlfriendName || 'My Girl';
+    this.newNoteMessage = '';
+    this.newNoteColor = 'pink';
+    this.showAddNoteModal = true;
+    this.audio.playCutePop();
+  }
+
+  public closeAddNoteModal(): void {
+    this.showAddNoteModal = false;
+  }
+
+  public saveNewStickyNote(): void {
+    if (!this.newNoteMessage || !this.newNoteMessage.trim()) {
+      this.showToast('Please write a sweet message first! ✍️❤️');
+      return;
+    }
+
+    const newNote: LoveStickyNote = {
+      id: 'note-' + Date.now(),
+      author: this.newNoteAuthor.trim() || 'Love',
+      message: this.newNoteMessage.trim(),
+      date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      color: this.newNoteColor,
+      likes: 1,
+      rotation: Math.floor(Math.random() * 7) - 3,
+      isCustom: true
+    };
+
+    this.stickyNotesList.unshift(newNote);
+    this.showAddNoteModal = false;
+    this.audio.playMagicSparkle();
+    this.launchHeartBurst();
+    this.showToast('Love Note pinned to the wall! 📌💖');
+
+    try {
+      localStorage.setItem('love_sticky_notes', JSON.stringify(this.stickyNotesList));
+    } catch (e) {}
+
+    this.tracker.logAction('input', `Pinned Love Note on Wall: "${newNote.message.slice(0, 35)}..." 📌`, {
+      author: newNote.author,
+      color: newNote.color
+    });
+  }
+
+  public likeStickyNote(note: LoveStickyNote): void {
+    note.likes++;
+    this.audio.playCutePop();
+    this.launchHeartBurst();
+    this.showToast(`Sent a heart to "${note.author}"'s note! ❤️`);
+    try {
+      localStorage.setItem('love_sticky_notes', JSON.stringify(this.stickyNotesList));
+    } catch (e) {}
+    this.tracker.logAction('letter', `Liked Sticky Note by ${note.author} ❤️`);
+  }
+
+  public deleteStickyNote(noteId: string): void {
+    const idx = this.stickyNotesList.findIndex(n => n.id === noteId);
+    if (idx >= 0) {
+      this.stickyNotesList.splice(idx, 1);
+      this.audio.playCutePop();
+      this.showToast('Sticky note removed from the board.');
+      try {
+        localStorage.setItem('love_sticky_notes', JSON.stringify(this.stickyNotesList));
+      } catch (e) {}
+    }
+  }
+
   private toastTimer: any = null;
 
   public showToast(msg: string): void {
@@ -2722,16 +3427,18 @@ function recordEntry(data) {
 
   @HostListener('window:keydown.escape')
   onEscapeKey(): void {
-    if (this.showInstallModal) {
-      this.closeInstallModal();
-    } else if (this.showTrackerModal) {
-      this.closeTracker();
-    } else if (this.showCustomizer) {
+    if (this.showCustomizer) {
       this.showCustomizer = false;
     } else if (this.selectedMilestone) {
       this.closeMilestone();
     } else if (this.isMobileMenuOpen) {
       this.closeMobileMenu();
+    } else if (this.activeOpenWhen) {
+      this.closeEnvelopeModal();
+    } else if (this.showAddNoteModal) {
+      this.closeAddNoteModal();
+    } else if (this.showWarmHugOverlay) {
+      this.closeWarmHugOverlay();
     }
   }
 }

@@ -67,6 +67,7 @@
     <a (click)="navigateToPage('shayari')" class="nav-link" [class.active]="currentPage === 'shayari'">Shayari 📜</a>
     <a (click)="navigateToPage('coupons')" class="nav-link" [class.active]="currentPage === 'coupons'">Coupons 🎟️</a>
     <a (click)="navigateToPage('games')" class="nav-link" [class.active]="currentPage === 'games'">Love Fun 🎡💖</a>
+    <a (click)="navigateToPage('expressions')" class="nav-link" [class.active]="currentPage === 'expressions'">Expressions 🎙️❤️</a>
     <button (click)="navigateToPage('proposal')" class="nav-link proposal-cta" [class.active]="currentPage === 'proposal'">The Question 💍</button>
   </nav>
 
@@ -98,22 +99,10 @@
       <button class="pill-btn" [class.active]="ambientTheme === 'stars'" (click)="setAmbientTheme('stars')" title="Cosmic Starlight">✨</button>
     </div>
 
-    <!-- Install App Button (Desktop & Mobile) -->
-    <button (click)="promptInstallApp()" class="btn-install-app desktop-only" [title]="isAppInstalled ? 'App Installed!' : 'Install as Mobile / Desktop App'">
-      <span>📲</span>
-      <span class="btn-text">{{ isAppInstalled ? 'Installed' : 'Install App' }}</span>
-    </button>
-
     <!-- Personalize Button (Desktop Only) -->
     <button (click)="openCustomizer()" class="btn-personalize desktop-only" title="Customize names, dates & memories">
       <span>⚙️</span>
       <span class="btn-text">Personalize</span>
-    </button>
-
-    <!-- Activity Tracker Button (Desktop Only) -->
-    <button (click)="openTracker()" class="btn-icon tracker-nav-btn desktop-only" title="View Activity Tracker & Click Logs">
-      <span>📊</span>
-      <span *ngIf="tracker.logs.length > 0" class="tracker-nav-count">{{ tracker.logs.length }}</span>
     </button>
 
     <!-- Mobile Hamburger Menu Button (Phone / Tablet Only) -->
@@ -214,6 +203,15 @@
         <span class="nav-item-arrow">›</span>
       </button>
 
+      <button (click)="navigateToPage('expressions')" class="mobile-nav-item" [class.active]="currentPage === 'expressions'">
+        <span class="nav-item-icon">🎙️</span>
+        <div class="nav-item-text">
+          <span class="item-title">Chapter 7: Expressions of Love (इश्क़-ए-बयान)</span>
+          <span class="item-sub">Voice confessions, 7 vows, open-when notes & wall</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
       <button (click)="navigateToPage('proposal')" class="mobile-nav-item proposal-item" [class.active]="currentPage === 'proposal'">
         <span class="nav-item-icon">💍</span>
         <div class="nav-item-text">
@@ -226,19 +224,9 @@
 
     <!-- Mobile Drawer Action Bar (Install + Personalize + Tracker + Custom Audio) -->
     <div class="mobile-drawer-actions">
-      <button (click)="promptInstallApp()" class="mobile-action-btn install-mobile-btn">
-        <span>📲</span>
-        <span>{{ isAppInstalled ? 'App Ready' : 'Install App' }}</span>
-      </button>
-
       <button (click)="openCustomizer()" class="mobile-action-btn">
         <span>⚙️</span>
         <span>Personalize</span>
-      </button>
-
-      <button (click)="openTracker()" class="mobile-action-btn">
-        <span>📊</span>
-        <span>Tracker ({{ tracker.logs.length }})</span>
       </button>
 
       <label class="mobile-action-btn upload-mobile-btn">
@@ -1628,7 +1616,309 @@
     </div>
   </section>
 
-  <!-- ================= CHAPTER 7: THE BIG PROPOSAL QUESTION ================= -->
+  <!-- ================= CHAPTER 7: EXPRESSIONS OF LOVE (इश्क़-ए-बयान) ================= -->
+  <section class="section expressions-section" id="expressions" *ngIf="currentPage === 'expressions'">
+    <div class="section-header">
+      <span class="section-tag font-script">Chapter Seven</span>
+      <h2 class="section-title">Expressions of Love & Sacred Vows</h2>
+      <p class="section-desc">
+        Deep spoken confessions, 7 forever promises, emotional Open-When envelopes, and our wall of love dedicated to you, {{ story.config.girlfriendName }}.
+      </p>
+    </div>
+
+    <!-- Navigation Tab Pill Bar -->
+    <div class="expressions-tabs-nav">
+      <button class="expr-tab-btn" 
+              [class.active]="activeExpressionTab === 'confessions'"
+              (click)="setExpressionTab('confessions')">
+        <span class="tab-emoji">🎙️</span>
+        <span class="tab-title">Voice Confessions</span>
+      </button>
+      <button class="expr-tab-btn" 
+              [class.active]="activeExpressionTab === 'vows'"
+              (click)="setExpressionTab('vows')">
+        <span class="tab-emoji">💍</span>
+        <span class="tab-title">7 Sacred Vows</span>
+        <span class="tab-count-badge" *ngIf="sealedVowsCount > 0">{{ sealedVowsCount }}/7</span>
+      </button>
+      <button class="expr-tab-btn" 
+              [class.active]="activeExpressionTab === 'openwhen'"
+              (click)="setExpressionTab('openwhen')">
+        <span class="tab-emoji">💌</span>
+        <span class="tab-title">"Open When..." Notes</span>
+      </button>
+      <button class="expr-tab-btn" 
+              [class.active]="activeExpressionTab === 'jar'"
+              (click)="setExpressionTab('jar')">
+        <span class="tab-emoji">🏺</span>
+        <span class="tab-title">Love Affirmation Jar</span>
+      </button>
+      <button class="expr-tab-btn" 
+              [class.active]="activeExpressionTab === 'wall'"
+              (click)="setExpressionTab('wall')">
+        <span class="tab-emoji">📌</span>
+        <span class="tab-title">Wall of Love</span>
+        <span class="tab-count-badge">{{ stickyNotesList.length }}</span>
+      </button>
+    </div>
+
+    <!-- ================= TAB 1: SPOKEN CONFESSIONS (Voice of My Soul) ================= -->
+    <div class="tab-content-panel confessions-panel" *ngIf="activeExpressionTab === 'confessions'">
+      <div class="confession-stage-card">
+        <!-- Confession Selector Chips -->
+        <div class="confession-chips-rack">
+          <button *ngFor="let c of confessionsList" 
+                  class="confession-chip"
+                  [class.active]="activeConfessionId === c.id"
+                  (click)="selectConfession(c.id)">
+            <span>{{ c.icon }}</span>
+            <span>{{ c.title }}</span>
+          </button>
+        </div>
+
+        <!-- Active Confession Display -->
+        <div class="confession-main-content">
+          <div class="confession-top-bar">
+            <div class="confession-badge-wrap">
+              <span class="confession-tag-badge font-script">{{ currentConfession.emotionTag }}</span>
+              <span class="confession-duration">⏱️ ~{{ currentConfession.durationEstimate }}</span>
+            </div>
+            <div class="audio-waveform-anim" [class.speaking]="isSpeakingConfession">
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+            </div>
+          </div>
+
+          <h3 class="confession-title font-flourish">{{ currentConfession.title }}</h3>
+          <h4 class="confession-hindi-title font-script">{{ currentConfession.hindiTitle }}</h4>
+
+          <!-- Hindi Couplet / Poetic Verse -->
+          <div class="confession-hindi-quote-box">
+            <span class="quote-ornament-left">“</span>
+            <p class="hindi-quote-text font-serif">{{ currentConfession.hindiQuote }}</p>
+            <span class="quote-ornament-right">”</span>
+          </div>
+
+          <!-- English Narrative -->
+          <div class="confession-body-text">
+            <p>{{ currentConfession.englishBody }}</p>
+          </div>
+
+          <!-- Action Buttons & Audio Player -->
+          <div class="confession-actions-bar">
+            <button (click)="playConfessionVoice(currentConfession)" 
+                    class="btn btn-primary btn-voice-play" 
+                    [class.is-playing]="isSpeakingConfession">
+              <span class="play-icon">{{ isSpeakingConfession ? '⏸️' : '🎙️' }}</span>
+              <span>{{ isSpeakingConfession ? 'Pause Voice Confession' : 'Listen to Voice Confession' }}</span>
+            </button>
+            <div class="confession-sub-actions">
+              <button (click)="copyConfessionText(currentConfession)" class="btn btn-secondary btn-copy-confession" title="Copy confession to clipboard">
+                <span>Copy Text</span>
+                <span>📋</span>
+              </button>
+              <button (click)="launchHeartBurst()" class="btn-heart-burst" title="Send a heart">
+                <span>❤️</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 2: THE 7 SACRED LOVE VOWS ================= -->
+    <div class="tab-content-panel vows-panel" *ngIf="activeExpressionTab === 'vows'">
+      <div class="vows-header-summary">
+        <div class="vows-progress-box">
+          <div class="progress-info">
+            <span class="progress-title">✨ Sacred Vows Ceremony (सात फेरे)</span>
+            <span class="progress-count font-script">{{ sealedVowsCount }} of 7 Sealed</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="(sealedVowsCount / 7) * 100"></div>
+          </div>
+          <p class="progress-hint">
+            {{ allVowsSealed ? '💍 All 7 vows are permanently sealed in our hearts for eternity!' : 'Tap "Seal This Vow With My Heart" on each sacred promise to lock it forever.' }}
+          </p>
+        </div>
+
+        <button *ngIf="allVowsSealed" (click)="resetSealedVows()" class="btn-reset-vows-link">
+          🔄 Re-experience Ceremony
+        </button>
+      </div>
+
+      <!-- Sealed Certificate Banner if All 7 Sealed -->
+      <div class="vows-completion-banner" *ngIf="allVowsSealed">
+        <div class="completion-crown">👑💍✨</div>
+        <h3>The Eternal Love Covenant is Sealed!</h3>
+        <p>
+          {{ story.config.boyfriendName }} & {{ story.config.girlfriendName }} are bound by these 7 sacred vows of respect, warmth, loyalty, and lifelong joy.
+        </p>
+        <button (click)="launchConfetti()" class="btn btn-primary btn-celebrate-vows">
+          🎉 Celebrate Our Eternal Bond!
+        </button>
+      </div>
+
+      <!-- 7 Vows Grid -->
+      <div class="vows-grid">
+        <div *ngFor="let v of sacredVows" 
+             class="sacred-vow-card" 
+             [class.is-sealed]="v.isSealed">
+          <div class="vow-card-top">
+            <div class="vow-number-badge font-script">Vow #{{ v.id }}</div>
+            <div class="vow-icon">{{ v.icon }}</div>
+            <div class="vow-seal-stamp" *ngIf="v.isSealed">
+              <span>❤️ SEALED</span>
+            </div>
+          </div>
+
+          <h4 class="vow-title">{{ v.title }}</h4>
+          <h5 class="vow-hindi-title font-script">{{ v.hindiTitle }}</h5>
+
+          <p class="vow-english-text">{{ v.promiseText }}</p>
+
+          <div class="vow-hindi-box font-serif">
+            <p>“{{ v.hindiText }}”</p>
+          </div>
+
+          <div class="vow-card-bottom">
+            <button (click)="sealSacredVow(v)" 
+                    class="btn btn-seal-vow" 
+                    [disabled]="v.isSealed">
+              <span *ngIf="!v.isSealed">💍 Seal This Vow with My Touch</span>
+              <span *ngIf="v.isSealed">✨ Sealed for Eternity ({{ v.sealedDate }})</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 3: "OPEN WHEN..." EMOTIONAL ENVELOPES ================= -->
+    <div class="tab-content-panel openwhen-panel" *ngIf="activeExpressionTab === 'openwhen'">
+      <div class="openwhen-intro-card">
+        <span class="intro-emoji">💌✨</span>
+        <h3>Emotional First-Aid Love Envelopes</h3>
+        <p>Whenever you need comfort, a hug, a laugh, or reassurance, tap the envelope made for that exact moment:</p>
+      </div>
+
+      <div class="openwhen-grid">
+        <div *ngFor="let env of openWhenEnvelopes" 
+             class="openwhen-envelope-card"
+             (click)="openEnvelope(env)">
+          <div class="envelope-top-badge font-script">{{ env.badge }}</div>
+          <div class="envelope-art-box">
+            <div class="virtual-flap"></div>
+            <div class="wax-heart-seal">{{ env.icon }}</div>
+          </div>
+          <h4 class="envelope-label">{{ env.label }}</h4>
+          <p class="envelope-hindi-label font-serif">{{ env.hindiLabel }}</p>
+          <span class="tap-open-hint">Tap to Unfold 💌</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 4: LOVE AFFIRMATION JAR ================= -->
+    <div class="tab-content-panel jar-panel" *ngIf="activeExpressionTab === 'jar'">
+      <div class="jar-stage-card">
+        <div class="jar-visual-container" [class.shaking]="isJarShaking" (click)="pullAffirmationFromJar()">
+          <div class="jar-cork-lid"></div>
+          <div class="glass-jar-body">
+            <div class="jar-inner-glow"></div>
+            <div class="jar-floating-notes">
+              <span class="mini-note n1">💌</span>
+              <span class="mini-note n2">✨</span>
+              <span class="mini-note n3">💖</span>
+              <span class="mini-note n4">🌸</span>
+            </div>
+            <span class="jar-tag-label font-script">Jar of Sweet Truths</span>
+          </div>
+          <p class="tap-jar-prompt">Tap the jar to draw today's love note! 🏺✨</p>
+        </div>
+
+        <!-- Pulled Affirmation Scroll -->
+        <div class="affirmation-scroll-display" *ngIf="currentAffirmation">
+          <div class="scroll-pin-top">❧ ❦</div>
+          <span class="affirmation-category-badge font-script">{{ currentAffirmation.emoji }} {{ currentAffirmation.category }}</span>
+          
+          <h4 class="affirmation-quote font-serif">
+            “{{ currentAffirmation.quote }}”
+          </h4>
+
+          <div class="affirmation-divider"><span>❦</span></div>
+
+          <p class="affirmation-hindi-quote font-serif">
+            “{{ currentAffirmation.hindiQuote }}”
+          </p>
+
+          <div class="affirmation-actions">
+            <button (click)="pullAffirmationFromJar()" class="btn btn-primary btn-draw-another">
+              <span>🎲 Pull Another Note</span>
+            </button>
+            <button (click)="copyAffirmation(currentAffirmation)" class="btn btn-secondary btn-copy-aff">
+              <span>📋 Copy</span>
+            </button>
+            <button (click)="shareAffirmationWhatsApp(currentAffirmation)" class="btn btn-secondary btn-wa-aff">
+              <span>💬 Share to WhatsApp</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 5: WALL OF LOVE (STICKY CONFESSIONS) ================= -->
+    <div class="tab-content-panel wall-panel" *ngIf="activeExpressionTab === 'wall'">
+      <div class="wall-header-card">
+        <div class="wall-title-box">
+          <span class="wall-emoji">📌</span>
+          <div>
+            <h3>Our Wall of Love & Sticky Notes</h3>
+            <p>Little love notes, reminders, and promises pinned right here. You can stick your own note too!</p>
+          </div>
+        </div>
+        <button (click)="openAddNoteModal()" class="btn btn-primary btn-stick-note">
+          <span>✍️ + Stick a Love Note</span>
+        </button>
+      </div>
+
+      <!-- Sticky Notes Corkboard Grid -->
+      <div class="corkboard-grid">
+        <div *ngFor="let note of stickyNotesList" 
+             class="sticky-note-card"
+             [ngClass]="'color-' + note.color"
+             [style.transform]="'rotate(' + note.rotation + 'deg)'">
+          <div class="sticky-pin">📍</div>
+          
+          <div class="sticky-note-body">
+            <p class="sticky-message font-script">{{ note.message }}</p>
+          </div>
+
+          <div class="sticky-note-footer">
+            <div class="sticky-author-box">
+              <span class="sticky-author font-flourish">— {{ note.author }}</span>
+              <span class="sticky-date">{{ note.date }}</span>
+            </div>
+            <div class="sticky-actions">
+              <button (click)="likeStickyNote(note)" class="btn-like-note" title="Send a heart">
+                <span>❤️</span>
+                <span class="like-count">{{ note.likes }}</span>
+              </button>
+              <button *ngIf="note.isCustom" (click)="deleteStickyNote(note.id)" class="btn-del-note" title="Remove note">
+                <span>🗑️</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 8: THE BIG PROPOSAL QUESTION ================= -->
   <section class="section proposal-section" id="proposal" #proposalSection *ngIf="currentPage === 'proposal'">
     <div class="spotlight-effect"></div>
 
@@ -1808,13 +2098,7 @@
 <footer class="romantic-footer">
   <p>Made with endless devotion for <span class="footer-gf font-script">{{ story.config.girlfriendName }}</span></p>
   <p class="footer-sub">Written in the stars, cherished in reality.</p>
-  <div class="footer-tracker-wrap">
-    <button (click)="openTracker()" class="btn-footer-tracker" title="View what buttons were clicked and what entries were made">
-      <span>📊 View Activity & Click Tracker</span>
-      <span class="footer-tracker-badge">{{ tracker.logs.length }} actions</span>
-    </button>
-  </div>
-</footer>
+  </footer>
 
 <!-- ================= MILESTONE DETAIL MODAL ================= -->
 <div class="modal-backdrop" *ngIf="selectedMilestone" (click)="closeMilestone()">
@@ -1890,7 +2174,6 @@
     <div class="customizer-actions">
       <button (click)="resetCustomizer()" class="btn-text-btn">Reset Defaults</button>
       <button (click)="downloadCertificatePdf()" class="btn-text-btn" style="color: var(--accent-rose);">Download PDF Certificate 📄</button>
-      <button (click)="openTracker()" class="btn-text-btn" style="color: #60a5fa;">View Activity Tracker 📊</button>
       <div class="right-actions">
         <button (click)="showCustomizer = false" class="btn btn-secondary">Cancel</button>
         <button (click)="saveAndCloseCustomizer()" class="btn btn-primary">Save Changes ❤️</button>
@@ -1899,320 +2182,87 @@
   </div>
 </div>
 
-<!-- ================= ACTIVITY & CLICK TRACKER MODAL ================= -->
-<div class="modal-backdrop tracker-backdrop" *ngIf="showTrackerModal" (click)="closeTracker()">
-  <div class="modal-dialog tracker-dialog" (click)="$event.stopPropagation()">
-    <!-- Header -->
-    <div class="tracker-modal-header">
-      <div class="tracker-title-box">
-        <span class="tracker-header-icon">📊</span>
-        <div>
-          <h3 class="tracker-title">Love Story Activity & Entry Tracker</h3>
-          <p class="tracker-subtitle">Recorded timeline of what buttons were clicked & what entries were submitted</p>
-        </div>
-      </div>
-      <button class="modal-close" (click)="closeTracker()">✕</button>
+<!-- ================= OPEN WHEN ENVELOPE MODAL ================= -->
+<div class="openwhen-modal-backdrop" *ngIf="activeOpenWhen" (click)="closeEnvelopeModal()">
+  <div class="openwhen-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="openwhen-modal-header">
+      <div class="dialog-badge font-script">{{ activeOpenWhen.badge }}</div>
+      <button class="modal-close-btn" (click)="closeEnvelopeModal()" aria-label="Close">✕</button>
     </div>
 
-    <!-- Summary Stats Grid -->
-    <div class="tracker-stats-grid">
-      <div class="stat-card" [class.stat-card-highlight]="tracker.proposalStatus.includes('YES')">
-        <div class="stat-icon">💍</div>
-        <div class="stat-info">
-          <span class="stat-label">Proposal Status</span>
-          <span class="stat-value font-highlight">{{ tracker.proposalStatus }}</span>
+    <div class="openwhen-modal-body">
+      <div class="modal-envelope-icon">{{ activeOpenWhen.icon }}</div>
+      <h3 class="modal-envelope-title">{{ activeOpenWhen.label }}</h3>
+      
+      <div class="modal-parchment-sheet">
+        <h4 class="modal-greeting font-flourish">{{ activeOpenWhen.greeting }}</h4>
+        <p class="modal-content-para">{{ activeOpenWhen.content }}</p>
+
+        <div class="modal-hindi-box font-serif">
+          <p>“{{ activeOpenWhen.hindiAdvice }}”</p>
         </div>
+
+        <p class="modal-signoff font-script">With endless tenderness,<br>{{ story.config.boyfriendName }} ❤️</p>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-icon">🙈</div>
-        <div class="stat-info">
-          <span class="stat-label">'No' Evaded</span>
-          <span class="stat-value">{{ tracker.noAttemptsCount }} times</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">💌</div>
-        <div class="stat-info">
-          <span class="stat-label">Letters Read</span>
-          <span class="stat-value">{{ tracker.lettersOpenedCount }} of {{ story.loveLetters.length }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">🎟️</div>
-        <div class="stat-info">
-          <span class="stat-label">Coupons Used</span>
-          <span class="stat-value">{{ tracker.couponsRedeemedCount }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">🎮</div>
-        <div class="stat-info">
-          <span class="stat-label">Games Played</span>
-          <span class="stat-value">{{ tracker.gamesPlayedCount }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">✏️</div>
-        <div class="stat-info">
-          <span class="stat-label">Entries Saved</span>
-          <span class="stat-value">{{ tracker.inputsCount }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Google Sheets Integration Card -->
-    <div class="gsheet-sync-card">
-      <div class="gsheet-header-row">
-        <div class="gsheet-title-group">
-          <span class="gsheet-logo-badge">📊</span>
-          <div>
-            <div class="gsheet-title-line">
-              <h4 class="gsheet-heading">Connected Google Sheet</h4>
-              <span class="gsheet-live-pill" [class.active]="tracker.webhookUrl">
-                {{ tracker.webhookUrl ? '⚡ Live Sync Active' : '📋 1-Click Paste Ready' }}
-              </span>
-            </div>
-            <p class="gsheet-desc">
-              Your Google Spreadsheet: 
-              <a [href]="tracker.googleSheetUrl" target="_blank" rel="noopener noreferrer" class="gsheet-link">
-                <code>1tUaj7q9J7yybEGtNE_NtEAolD3dLqZ2u3YyuZuaGyik</code> ↗
-              </a>
-            </p>
-          </div>
-        </div>
-
-        <div class="gsheet-quick-actions">
-          <button (click)="copyAndOpenSheet()" class="gsheet-btn gsheet-btn-open" title="Copies data to clipboard and opens Google Sheet so you can simply press Ctrl+V in cell A1!">
-            <span>🚀 Copy & Open Sheet</span>
-          </button>
-          <button (click)="copyForGoogleSheets()" class="gsheet-btn gsheet-btn-paste" title="Copy tab-separated table data to clipboard">
-            <span>📋 Copy Rows</span>
-          </button>
-          <button (click)="downloadTrackerCsv()" class="gsheet-btn gsheet-btn-csv" title="Download .CSV file formatted for Google Sheets import">
-            <span>📥 Download CSV</span>
-          </button>
-          <button (click)="toggleRawTabularBox()" class="gsheet-btn gsheet-btn-raw" [class.btn-active]="showRawTabularBox" title="View or manually copy raw table data">
-            <span>👁️ View Table {{ showRawTabularBox ? '▲' : '▼' }}</span>
-          </button>
-          <button (click)="toggleWebhookSetup()" class="gsheet-btn gsheet-btn-webhook" [class.btn-active]="showWebhookSetup" title="Toggle automatic real-time live sync settings">
-            <span>⚡ Auto Live-Sync {{ showWebhookSetup ? '▲' : '▼' }}</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Raw Tabular Text Drawer (for 100% reliable manual copy on any device) -->
-      <div class="gsheet-raw-drawer" *ngIf="showRawTabularBox">
-        <div class="raw-drawer-header">
-          <span class="raw-drawer-title">📋 Google Sheets Ready Data (Columns: ID, Date, Time, Category, Action, Details):</span>
-          <button (click)="copyForGoogleSheets()" class="raw-copy-btn">📋 Copy Table</button>
-        </div>
-        <textarea [value]="tracker.getTabularTsvContent()" readonly rows="6" class="raw-table-textarea" (click)="$any($event.target).select()"></textarea>
-        <p class="raw-tip">💡 <strong>Instant Paste:</strong> Is pure text ko copy karein aur apni Google Sheet me <strong>Cell A1</strong> select karke <strong>Ctrl + V</strong> daba dein! Saare columns automatically ban jayenge.</p>
-      </div>
-
-      <!-- Live Webhook Configuration Drawer -->
-      <div class="gsheet-webhook-drawer" *ngIf="showWebhookSetup">
-        <div class="webhook-drawer-inner">
-          <div class="webhook-input-section">
-            <label class="webhook-label">
-              <span>Google Apps Script Webhook URL (For Real-Time Automatic Row Insertion):</span>
-            </label>
-
-            <!-- Warning if user pasted Spreadsheet View link instead of Web App URL -->
-            <div *ngIf="tracker.isSpreadsheetDocUrl(webhookInputUrl)" class="webhook-url-warning">
-              ⚠️ <strong>Notice:</strong> Yeh aapki Google Sheet ka view/edit link hai! Auto-sync ke liye niche diye 30-sec steps follow karke <em>Web app URL</em> paste karein.
-            </div>
-
-            <div class="webhook-input-row">
-              <input type="url" 
-                     [(ngModel)]="webhookInputUrl" 
-                     placeholder="https://script.google.com/macros/s/.../exec"
-                     class="webhook-url-input">
-              <button (click)="saveWebhookUrl()" class="webhook-btn-save">
-                💾 Save URL
-              </button>
-              <button (click)="syncAllToGoogleSheet()" 
-                      [disabled]="isSyncingToSheet || !tracker.webhookUrl" 
-                      class="webhook-btn-sync-all">
-                <span>{{ isSyncingToSheet ? 'Syncing... ⏳' : '⚡ Sync All ' + tracker.logs.length + ' Logs Now' }}</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Quick Setup Guide -->
-          <div class="webhook-guide-box">
-            <div class="guide-header">
-              <span class="guide-badge">30-Second Setup for Automatic Live Sync</span>
-              <button (click)="copyAppsScriptCode()" class="guide-copy-code-btn">
-                📋 Copy Apps Script Code
-              </button>
-            </div>
-            <ol class="guide-steps">
-              <li>In your Google Sheet, click <strong>Extensions</strong> &gt; <strong>Apps Script</strong>.</li>
-              <li>Delete any existing code, paste the copied snippet, then click <strong>Save (💾)</strong>.</li>
-              <li>Click <strong>Deploy</strong> &gt; <strong>New deployment</strong> &gt; select <strong>Web app</strong> (Execute as: <em>Me</em>, Who has access: <em>Anyone</em>).</li>
-              <li>Click <strong>Deploy</strong>, copy the generated <em>Web app URL</em>, and paste it into the box above!</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Download & Export Actions Toolbar -->
-    <div class="tracker-actions-bar">
-      <div class="tracker-download-btns">
-        <button (click)="downloadTrackerText()" class="tracker-action-btn primary-export-btn" title="Download text report file for Notepad / sharing">
-          <span>📥 Download Report (.txt)</span>
+      <div class="modal-interactive-action">
+        <button (click)="triggerEnvelopeAction(activeOpenWhen)" class="btn btn-primary btn-trigger-action">
+          <span>{{ activeOpenWhen.actionLabel }}</span>
         </button>
-        <button (click)="downloadTrackerJson()" class="tracker-action-btn secondary-export-btn" title="Download raw JSON data file">
-          <span>📄 Download Data (.json)</span>
-        </button>
-        <button (click)="copyTrackerSummary()" class="tracker-action-btn copy-export-btn" title="Copy summary to clipboard">
-          <span>📋 Copy Summary</span>
-        </button>
-      </div>
-
-      <button (click)="clearTrackerLogs()" class="tracker-clear-btn" title="Clear all stored activity logs">
-        <span>🗑️ Clear History</span>
-      </button>
-    </div>
-
-    <!-- Category Filters -->
-    <div class="tracker-filters">
-      <button (click)="setTrackerFilter('all')" [class.active]="trackerFilter === 'all'" class="filter-chip">
-        All ({{ tracker.logs.length }})
-      </button>
-      <button (click)="setTrackerFilter('proposal')" [class.active]="trackerFilter === 'proposal'" class="filter-chip">
-        💍 Proposal
-      </button>
-      <button (click)="setTrackerFilter('input')" [class.active]="trackerFilter === 'input'" class="filter-chip">
-        ✏️ Inputs / Entries
-      </button>
-      <button (click)="setTrackerFilter('game')" [class.active]="trackerFilter === 'game'" class="filter-chip">
-        🎡 Games
-      </button>
-      <button (click)="setTrackerFilter('letter')" [class.active]="trackerFilter === 'letter'" class="filter-chip">
-        💌 Letters
-      </button>
-      <button (click)="setTrackerFilter('coupon')" [class.active]="trackerFilter === 'coupon'" class="filter-chip">
-        🎟️ Coupons
-      </button>
-    </div>
-
-    <!-- Timeline Event Feed -->
-    <div class="tracker-logs-container">
-      <div *ngIf="filteredTrackerLogs.length === 0" class="tracker-empty">
-        <div class="empty-emoji">🕵️‍♂️</div>
-        <h4>No actions recorded yet</h4>
-        <p>Start clicking letters, playing games, or personalizing details to see them live here!</p>
-      </div>
-
-      <div class="timeline-feed" *ngIf="filteredTrackerLogs.length > 0">
-        <div *ngFor="let entry of filteredTrackerLogs" class="timeline-item" [attr.data-category]="entry.category">
-          <div class="timeline-indicator">
-            <span *ngIf="entry.category === 'proposal'">💍</span>
-            <span *ngIf="entry.category === 'input'">✏️</span>
-            <span *ngIf="entry.category === 'game'">🎮</span>
-            <span *ngIf="entry.category === 'letter'">💌</span>
-            <span *ngIf="entry.category === 'coupon'">🎟️</span>
-            <span *ngIf="entry.category === 'visit'">🌟</span>
-            <span *ngIf="entry.category === 'music'">🎵</span>
-          </div>
-
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <span class="timeline-action">{{ entry.action }}</span>
-              <span class="timeline-timestamp">{{ entry.timeFormatted }} · {{ entry.dateFormatted }}</span>
-            </div>
-
-            <!-- Details Block if provided -->
-            <div *ngIf="entry.details" class="timeline-details">
-              <pre *ngIf="entry.details">{{ entry.details | json }}</pre>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ================= INSTALL APP INSTRUCTION MODAL ================= -->
-<div class="modal-backdrop" *ngIf="showInstallModal" (click)="closeInstallModal()">
-  <div class="modal-card install-modal-card" (click)="$event.stopPropagation()">
+<!-- ================= ADD STICKY NOTE MODAL ================= -->
+<div class="addnote-modal-backdrop" *ngIf="showAddNoteModal" (click)="closeAddNoteModal()">
+  <div class="addnote-modal-dialog" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <div class="modal-header-title">
-        <span class="modal-icon">📲</span>
-        <h3>Install "Our Love Story" as an App</h3>
-      </div>
-      <button (click)="closeInstallModal()" class="btn-close-modal">✕</button>
+      <h3>📌 Stick a Note on Our Love Wall</h3>
+      <button class="modal-close-btn" (click)="closeAddNoteModal()">✕</button>
     </div>
 
-    <div class="install-modal-body">
-      <div class="app-icon-preview">
-        <img src="assets/icons/icon.svg" alt="App Icon" class="preview-app-icon">
-        <div class="preview-meta">
-          <h4>Our Love Story ❤️</h4>
-          <p>By {{ story.config.boyfriendName }} & {{ story.config.girlfriendName }}</p>
-          <span class="pwa-tag">✨ Fullscreen • Fast • Works Offline</span>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Your Name / Moniker</label>
+        <input type="text" [(ngModel)]="newNoteAuthor" placeholder="e.g. {{ story.config.girlfriendName }}" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Sticky Note Message</label>
+        <textarea [(ngModel)]="newNoteMessage" rows="3" placeholder="Write something sweet, a memory, or a promise..." class="form-control"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Sticky Paper Color</label>
+        <div class="color-picker-chips">
+          <button type="button" class="color-chip pink" [class.selected]="newNoteColor === 'pink'" (click)="newNoteColor = 'pink'">🌸 Pink</button>
+          <button type="button" class="color-chip peach" [class.selected]="newNoteColor === 'peach'" (click)="newNoteColor = 'peach'">🍑 Peach</button>
+          <button type="button" class="color-chip lavender" [class.selected]="newNoteColor === 'lavender'" (click)="newNoteColor = 'lavender'">💜 Lavender</button>
+          <button type="button" class="color-chip mint" [class.selected]="newNoteColor === 'mint'" (click)="newNoteColor = 'mint'">🌿 Mint</button>
+          <button type="button" class="color-chip yellow" [class.selected]="newNoteColor === 'yellow'" (click)="newNoteColor = 'yellow'">🍋 Lemon</button>
         </div>
       </div>
 
-      <div class="install-instructions-list">
-        <div class="instruction-box android-box">
-          <div class="instruction-head">
-            <span class="platform-icon">🤖</span>
-            <h5>For Android (Chrome / Samsung Internet):</h5>
-          </div>
-          <ol>
-            <li>Tap the <strong>three dots (⋮)</strong> in the top right corner of your browser.</li>
-            <li>Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
-            <li>Tap <strong>"Install"</strong> — and the app icon will appear directly on your home screen!</li>
-          </ol>
-        </div>
-
-        <div class="instruction-box ios-box">
-          <div class="instruction-head">
-            <span class="platform-icon">🍎</span>
-            <h5>For iPhone & iPad (Safari):</h5>
-          </div>
-          <ol>
-            <li>Tap the <strong>Share button (📤)</strong> at the bottom of Safari.</li>
-            <li>Scroll down and tap <strong>"Add to Home Screen (➕)"</strong>.</li>
-            <li>Tap <strong>"Add"</strong> in the top right corner — and enjoy fullscreen love anytime!</li>
-          </ol>
-        </div>
-      </div>
-
-      <div class="install-features-grid">
-        <div class="feature-item">
-          <span>🚫</span>
-          <p>No browser bars</p>
-        </div>
-        <div class="feature-item">
-          <span>⚡</span>
-          <p>Instant 1-tap open</p>
-        </div>
-        <div class="feature-item">
-          <span>🎵</span>
-          <p>Uninterrupted music</p>
-        </div>
-        <div class="feature-item">
-          <span>🔒</span>
-          <p>100% Private</p>
-        </div>
+      <div class="modal-actions">
+        <button (click)="saveNewStickyNote()" class="btn btn-primary btn-save-note">
+          <span>📌 Stick to the Wall!</span>
+        </button>
+        <button (click)="closeAddNoteModal()" class="btn btn-secondary">
+          Cancel
+        </button>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="modal-footer">
-      <button (click)="closeInstallModal()" class="btn btn-primary btn-got-it">
-        <span>Got It! Open On My Phone 📱❤️</span>
-      </button>
-    </div>
+<!-- ================= WARM VIRTUAL HUG OVERLAY ================= -->
+<div class="warm-hug-overlay" *ngIf="showWarmHugOverlay" (click)="closeWarmHugOverlay()">
+  <div class="hug-content-box">
+    <div class="hugging-arms-anim">🤗❤️🤗</div>
+    <h3>Warm Virtual Hug Wrapping You!</h3>
+    <p>Hold your phone to your chest. Feel the warmth, the love, and the safe embrace across the miles.</p>
+    <span class="hug-close-hint font-script">You are always loved, {{ story.config.girlfriendName }} ✨</span>
   </div>
 </div>
 
