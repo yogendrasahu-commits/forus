@@ -1,0 +1,20 @@
+{
+  "name": "Our Love Story - Proposal & Memories",
+  "short_name": "Love Story ❤️",
+  "description": "An interactive love story, letters, arcade games, and proposal written in the stars.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0612",
+  "theme_color": "#f43f5e",
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "entertainment"],
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

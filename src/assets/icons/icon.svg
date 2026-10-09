@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f0a21"/>
+      <stop offset="50%" stop-color="#3b0722"/>
+      <stop offset="100%" stop-color="#09030e"/>
+    </linearGradient>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="50%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#f43f5e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#f43f5e" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background App Icon Canvas -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  
+  <!-- Outer Gold/Rose Border Ring -->
+  <rect x="12" y="12" width="488" height="488" rx="100" fill="none" stroke="url(#heartGrad)" stroke-width="4" stroke-opacity="0.4"/>
+
+  <!-- Radial Glow Behind Heart -->
+  <circle cx="256" cy="240" r="160" fill="url(#glowGrad)"/>
+
+  <!-- Romantic Sparkles -->
+  <g fill="#ffd700" opacity="0.9">
+    <path d="M120 140 L124 152 L136 156 L124 160 L120 172 L116 160 L104 156 L116 152 Z"/>
+    <path d="M390 130 L394 142 L406 146 L394 150 L390 162 L386 150 L374 146 L386 142 Z"/>
+    <path d="M380 340 L383 349 L392 352 L383 355 L380 364 L377 355 L368 352 L377 349 Z"/>
+    <circle cx="140" cy="330" r="4" fill="#fb7185"/>
+    <circle cx="360" cy="200" r="3" fill="#ffffff"/>
+    <circle cx="150" cy="210" r="3" fill="#ffffff"/>
+  </g>
+
+  <!-- Main Radiant Love Heart -->
+  <g filter="url(#shadow)">
+    <path d="M256 420 C256 420 100 310 100 196 C100 134 148 90 206 90 C234 90 250 106 256 116 C262 106 278 90 306 90 C364 90 412 134 412 196 C412 310 256 420 256 420 Z" 
+          fill="url(#heartGrad)"/>
+  </g>
+
+  <!-- Subtle Heart Highlight -->
+  <path d="M130 180 C130 140 160 115 195 110 C180 120 170 145 172 175 C173 190 160 195 150 195 C138 195 130 188 130 180 Z" 
+        fill="#ffffff" opacity="0.3"/>
+
+  <!-- Golden Proposal Ring Intersecting Heart Base -->
+  <g transform="translate(256, 305)">
+    <!-- Ring Band -->
+    <ellipse cx="0" cy="0" rx="46" ry="16" fill="none" stroke="url(#goldGrad)" stroke-width="8"/>
+    <!-- Diamond Gem -->
+    <polygon points="0,-18 10,-8 6,2 -6,2 -10,-8" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
+    <!-- Diamond Sparkle -->
+    <circle cx="0" cy="-8" r="4" fill="#ffffff"/>
+  </g>
+
+  <!-- Sweet Couple Initial Badge: "US" -->
+  <text x="256" y="225" 
+        font-family="'Playfair Display', Georgia, serif" 
+        font-size="64" 
+        font-weight="bold" 
+        fill="#ffffff" 
+        text-anchor="middle" 
+        letter-spacing="2"
+        filter="drop-shadow(0 2px 6px rgba(0,0,0,0.5))">
+    US
+  </text>
+  
+  <text x="256" y="260" 
+        font-family="'Outfit', sans-serif" 
+        font-size="18" 
+        font-weight="600" 
+        fill="#fed7aa" 
+        text-anchor="middle" 
+        letter-spacing="4">
+    FOREVER
+  </text>
+</svg>

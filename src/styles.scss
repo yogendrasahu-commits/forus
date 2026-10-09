@@ -1,0 +1,241 @@
+/* Romantic Design System & Global Styles */
+:root {
+  --font-main: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-script: 'Dancing Script', cursive;
+  --font-flourish: 'Great Vibes', cursive;
+
+  /* Color Palette - Enchanted Twilight & Rose Gold */
+  --bg-primary: #0a0612;
+  --bg-secondary: #130a1e;
+  --bg-card: rgba(26, 14, 38, 0.75);
+  --bg-card-hover: rgba(39, 21, 56, 0.85);
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --border-glass: rgba(255, 182, 193, 0.18);
+  --border-glow: rgba(244, 63, 94, 0.4);
+
+  --accent-rose: #f43f5e;
+  --accent-rose-dark: #be123c;
+  --accent-blush: #fda4af;
+  --accent-coral: #fb7185;
+  --accent-gold: #fde047;
+  --accent-champagne: #fef08a;
+  --accent-purple: #c084fc;
+
+  --text-main: #fdf2f8;
+  --text-muted: #e2d2df;
+  --text-dim: #a78fa2;
+
+  --shadow-glow: 0 0 35px rgba(244, 63, 94, 0.35);
+  --shadow-gold: 0 0 25px rgba(253, 224, 71, 0.3);
+  --shadow-card: 0 20px 45px rgba(0, 0, 0, 0.5);
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+}
+
+[data-theme="light-romance"] {
+  --bg-primary: #fff1f2;
+  --bg-secondary: #ffe4e6;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --bg-glass: rgba(255, 255, 255, 0.6);
+  --border-glass: rgba(244, 63, 94, 0.2);
+  --border-glow: rgba(244, 63, 94, 0.5);
+
+  --accent-rose: #e11d48;
+  --accent-rose-dark: #9f1239;
+  --accent-blush: #e11d48;
+  --accent-coral: #fb7185;
+  --accent-gold: #d97706;
+  --accent-champagne: #fef3c7;
+  --accent-purple: #9333ea;
+
+  --text-main: #370617;
+  --text-muted: #6a040f;
+  --text-dim: #9d0208;
+
+  --shadow-glow: 0 10px 30px rgba(225, 29, 72, 0.2);
+  --shadow-card: 0 15px 35px rgba(225, 29, 72, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 105px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 860px) {
+  html {
+    scroll-padding-top: 140px;
+  }
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  transition: background-color 0.5s ease, color 0.5s ease;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  touch-action: manipulation;
+}
+
+button, a, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom Rose Scrollbar */
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-rose), var(--accent-purple));
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff6b8b, #d946ef);
+}
+
+/* Global Selection */
+::selection {
+  background: rgba(244, 63, 94, 0.4);
+  color: #fff;
+}
+
+/* Keyframe Animations */
+@keyframes heartFloat {
+  0% {
+    transform: translateY(105vh) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1.1) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(244, 63, 94, 0.8);
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.22);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.15);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes ringSpin {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Utility classes */
+.font-script {
+  font-family: var(--font-script);
+}
+
+.font-flourish {
+  font-family: var(--font-flourish);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 50%, #fef08a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fde047 0%, #fbbf24 60%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

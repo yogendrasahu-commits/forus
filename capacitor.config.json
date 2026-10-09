@@ -1,0 +1,8 @@
+{
+  "appId": "com.lovestory.proposal",
+  "appName": "Our Love Story",
+  "webDir": "dist/love-proposal",
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,2207 @@
+<!-- Ambient Floating Background Hearts & Emojis -->
+<div class="ambient-hearts-container" aria-hidden="true">
+  <!-- Glowing Heart Emojis Shower -->
+  <div *ngFor="let heart of floatingHeartEmojis" 
+       class="floating-heart-emoji" 
+       [style.left]="heart.left"
+       [style.font-size]="heart.size"
+       [style.animation-duration]="heart.duration"
+       [style.animation-delay]="heart.delay"
+       [style.opacity]="heart.opacity">
+    {{ heart.emoji }}
+  </div>
+
+  <!-- Ambient SVG Hearts -->
+  <div *ngFor="let heart of backgroundHearts" 
+       class="floating-heart" 
+       [style.left]="heart.left"
+       [style.width]="heart.size"
+       [style.height]="heart.size"
+       [style.animation-duration]="heart.duration"
+       [style.animation-delay]="heart.delay"
+       [style.opacity]="heart.opacity">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Click-Anywhere Animated Heart Emojis -->
+<div class="click-hearts-container" aria-hidden="true">
+  <span *ngFor="let ch of clickHearts" 
+        class="click-heart-particle" 
+        [style.left.px]="ch.x" 
+        [style.top.px]="ch.y">
+    {{ ch.emoji }}
+  </span>
+</div>
+
+<!-- Cursor Sparkle Trail -->
+<div class="sparkles-container" aria-hidden="true">
+  <span *ngFor="let s of sparkles" 
+        class="sparkle-dot" 
+        [style.left.px]="s.x" 
+        [style.top.px]="s.y" 
+        [style.width.px]="s.size" 
+        [style.height.px]="s.size" 
+        [style.background]="s.color">
+  </span>
+</div>
+
+<!-- Floating Navigation & Audio Controller Bar -->
+<!-- Floating Navigation & Audio Controller Bar -->
+<header class="top-nav-bar" [class.mobile-open]="isMobileMenuOpen">
+  <div class="nav-left">
+    <a (click)="navigateToPage('home')" class="nav-logo" role="button" tabindex="0">
+      <span class="heart-pulse">❤️</span>
+      <span class="logo-text">Our Love Story</span>
+    </a>
+  </div>
+
+  <!-- Desktop Navigation Links (Visible on screens > 860px) -->
+  <nav class="nav-center desktop-nav">
+    <a (click)="navigateToPage('home')" class="nav-link" [class.active]="currentPage === 'home'">Home 🏡</a>
+    <a (click)="navigateToPage('memories')" class="nav-link" [class.active]="currentPage === 'memories'">Memories 🌹</a>
+    <a (click)="navigateToPage('reasons')" class="nav-link" [class.active]="currentPage === 'reasons'">Why You 💖</a>
+    <a (click)="navigateToPage('letters')" class="nav-link" [class.active]="currentPage === 'letters'">Letters 💌</a>
+    <a (click)="navigateToPage('shayari')" class="nav-link" [class.active]="currentPage === 'shayari'">Shayari 📜</a>
+    <a (click)="navigateToPage('coupons')" class="nav-link" [class.active]="currentPage === 'coupons'">Coupons 🎟️</a>
+    <a (click)="navigateToPage('games')" class="nav-link" [class.active]="currentPage === 'games'">Love Fun 🎡💖</a>
+    <button (click)="navigateToPage('proposal')" class="nav-link proposal-cta" [class.active]="currentPage === 'proposal'">The Question 💍</button>
+  </nav>
+
+  <div class="nav-right">
+    <!-- Music Player Controller -->
+    <div class="music-controller" [class.playing]="audio.isPlaying">
+      <button (click)="audio.toggleBgm()" class="btn-icon music-btn" [title]="audio.isPlaying ? 'Pause romantic music' : 'Play romantic music'">
+        <span *ngIf="audio.isPlaying" class="music-bars">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </span>
+        <span *ngIf="!audio.isPlaying">🎵</span>
+      </button>
+
+      <label class="btn-icon upload-btn desktop-only" title="Upload your own song (.mp3)">
+        <input type="file" accept="audio/*" (change)="onCustomAudioSelected($event)" style="display:none">
+        📂
+      </label>
+    </div>
+
+    <!-- Theme Switcher -->
+    <button (click)="toggleTheme()" class="btn-icon theme-btn" [title]="currentTheme === 'dark' ? 'Switch to Sunrise Rose' : 'Switch to Twilight Night'">
+      {{ currentTheme === 'dark' ? '🌅' : '🌙' }}
+    </button>
+
+    <!-- Ambient Particle Theme Switcher (Desktop) -->
+    <div class="ambient-pill-bar desktop-only" title="Atmosphere Theme: Hearts, Petals, or Stars">
+      <button class="pill-btn" [class.active]="ambientTheme === 'hearts'" (click)="setAmbientTheme('hearts')" title="Floating Hearts">💖</button>
+      <button class="pill-btn" [class.active]="ambientTheme === 'petals'" (click)="setAmbientTheme('petals')" title="Rose Petals">🌹</button>
+      <button class="pill-btn" [class.active]="ambientTheme === 'stars'" (click)="setAmbientTheme('stars')" title="Cosmic Starlight">✨</button>
+    </div>
+
+    <!-- Install App Button (Desktop & Mobile) -->
+    <button (click)="promptInstallApp()" class="btn-install-app desktop-only" [title]="isAppInstalled ? 'App Installed!' : 'Install as Mobile / Desktop App'">
+      <span>📲</span>
+      <span class="btn-text">{{ isAppInstalled ? 'Installed' : 'Install App' }}</span>
+    </button>
+
+    <!-- Personalize Button (Desktop Only) -->
+    <button (click)="openCustomizer()" class="btn-personalize desktop-only" title="Customize names, dates & memories">
+      <span>⚙️</span>
+      <span class="btn-text">Personalize</span>
+    </button>
+
+    <!-- Activity Tracker Button (Desktop Only) -->
+    <button (click)="openTracker()" class="btn-icon tracker-nav-btn desktop-only" title="View Activity Tracker & Click Logs">
+      <span>📊</span>
+      <span *ngIf="tracker.logs.length > 0" class="tracker-nav-count">{{ tracker.logs.length }}</span>
+    </button>
+
+    <!-- Mobile Hamburger Menu Button (Phone / Tablet Only) -->
+    <button (click)="toggleMobileMenu()" 
+            class="btn-icon hamburger-btn mobile-only" 
+            [class.active]="isMobileMenuOpen"
+            aria-label="Toggle navigation menu"
+            [title]="isMobileMenuOpen ? 'Close Menu' : 'Open Menu'">
+      <span class="hamburger-box">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= MOBILE NAVIGATION DRAWER & BACKDROP ================= -->
+<div class="mobile-nav-backdrop" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()">
+  <nav class="mobile-nav-drawer" (click)="$event.stopPropagation()">
+    <!-- Drawer Header -->
+    <div class="mobile-drawer-header">
+      <div class="drawer-couple-badge">
+        <span>💍 {{ story.config.girlfriendName }} & {{ story.config.boyfriendName }}</span>
+      </div>
+      <div class="drawer-header-actions">
+        <div class="ambient-pill-bar mobile-ambient" title="Atmosphere">
+          <button class="pill-btn" [class.active]="ambientTheme === 'hearts'" (click)="setAmbientTheme('hearts')">💖</button>
+          <button class="pill-btn" [class.active]="ambientTheme === 'petals'" (click)="setAmbientTheme('petals')">🌹</button>
+          <button class="pill-btn" [class.active]="ambientTheme === 'stars'" (click)="setAmbientTheme('stars')">✨</button>
+        </div>
+        <button class="drawer-close-btn" (click)="closeMobileMenu()" aria-label="Close navigation menu">✕</button>
+      </div>
+    </div>
+
+    <!-- Drawer Navigation Links -->
+    <div class="mobile-nav-links">
+      <button (click)="navigateToPage('home')" class="mobile-nav-item" [class.active]="currentPage === 'home'">
+        <span class="nav-item-icon">🏡</span>
+        <div class="nav-item-text">
+          <span class="item-title">Home & Journey</span>
+          <span class="item-sub">Time counter & story directory</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
+      <button (click)="navigateToPage('memories')" class="mobile-nav-item" [class.active]="currentPage === 'memories'">
+        <span class="nav-item-icon">🌹</span>
+        <div class="nav-item-text">
+          <span class="item-title">Chapter 1: Memories & Milestones</span>
+          <span class="item-sub">Relive our story from 24 Feb 2026</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
+      <button (click)="navigateToPage('reasons')" class="mobile-nav-item" [class.active]="currentPage === 'reasons'">
+        <span class="nav-item-icon">💖</span>
+        <div class="nav-item-text">
+          <span class="item-title">Chapter 2: Why I Love You</span>
+          <span class="item-sub">50 reasons & Sweet Notes Jar</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
+      <button (click)="navigateToPage('letters')" class="mobile-nav-item" [class.active]="currentPage === 'letters'">
+        <span class="nav-item-icon">💌</span>
+        <div class="nav-item-text">
+          <span class="item-title">Chapter 3: Emotional Love Letters</span>
+          <span class="item-sub">20+ deep letters, vows & care</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
+      <button (click)="navigateToPage('shayari')" class="mobile-nav-item" [class.active]="currentPage === 'shayari'">
+        <span class="nav-item-icon">📜</span>
+        <div class="nav-item-text">
+          <span class="item-title">Chapter 4: Romantic Shayari</span>
+          <span class="item-sub">Heartfelt Urdu & Hindi poetry</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
+      <button (click)="navigateToPage('coupons')" class="mobile-nav-item" [class.active]="currentPage === 'coupons'">
+        <span class="nav-item-icon">🎟️</span>
+        <div class="nav-item-text">
+          <span class="item-title">Chapter 5: Love Coupons</span>
+          <span class="item-sub">Redeem cuddles, hugs & treats</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
+      <button (click)="navigateToPage('games')" class="mobile-nav-item" [class.active]="currentPage === 'games'">
+        <span class="nav-item-icon">🎡</span>
+        <div class="nav-item-text">
+          <span class="item-title">Chapter 6: Romance Arcade & Games</span>
+          <span class="item-sub">12 funny love games & activities</span>
+        </div>
+        <span class="nav-item-arrow">›</span>
+      </button>
+
+      <button (click)="navigateToPage('proposal')" class="mobile-nav-item proposal-item" [class.active]="currentPage === 'proposal'">
+        <span class="nav-item-icon">💍</span>
+        <div class="nav-item-text">
+          <span class="item-title">Grand Finale: The Big Question</span>
+          <span class="item-sub">Will you be mine forever? ❤️</span>
+        </div>
+        <span class="nav-item-glow">✨</span>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer Action Bar (Install + Personalize + Tracker + Custom Audio) -->
+    <div class="mobile-drawer-actions">
+      <button (click)="promptInstallApp()" class="mobile-action-btn install-mobile-btn">
+        <span>📲</span>
+        <span>{{ isAppInstalled ? 'App Ready' : 'Install App' }}</span>
+      </button>
+
+      <button (click)="openCustomizer()" class="mobile-action-btn">
+        <span>⚙️</span>
+        <span>Personalize</span>
+      </button>
+
+      <button (click)="openTracker()" class="mobile-action-btn">
+        <span>📊</span>
+        <span>Tracker ({{ tracker.logs.length }})</span>
+      </button>
+
+      <label class="mobile-action-btn upload-mobile-btn">
+        <input type="file" accept="audio/*" (change)="onCustomAudioSelected($event); closeMobileMenu()" style="display:none">
+        <span>📂</span>
+        <span>Add Song</span>
+      </label>
+    </div>
+
+    <div class="mobile-drawer-footer">
+      <p>“Written in the stars, cherished in reality.” ✨❤️</p>
+    </div>
+  </nav>
+</div>
+
+<main class="main-wrapper">
+  <!-- ================= PAGE 1: HOME / PROLOGUE & CHAPTER DIRECTORY ================= -->
+  <section class="hero-section" id="hero" *ngIf="currentPage === 'home'">
+    <div class="hero-content">
+      <div class="romantic-badge">
+        <span class="sparkle-icon">✨</span>
+        <span>Miles Apart, One Heartbeat ❤️ | Together Since 24 Feb 2026</span>
+        <span class="sparkle-icon">✨</span>
+      </div>
+
+      <h1 class="hero-title">
+        To My Dearest, <br>
+        <span class="gradient-text font-flourish hero-name">{{ story.config.girlfriendName }}</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        "No matter how many miles lie between our cities, 
+        <span class="quote-highlight">every beat of my heart belongs only to you.</span>"
+      </p>
+
+      <!-- Live Love Time Counter -->
+      <div class="love-counter-card">
+        <div class="counter-header">
+          <span class="counter-icon">⏳</span>
+          <h3>Closing The Distance, Second By Second</h3>
+        </div>
+        <p class="counter-sub">Since our eyes first met on <strong>24 February 2026 ({{ story.config.metDate | date:'longDate' }})</strong></p>
+
+        <div class="time-grid">
+          <div class="time-box">
+            <span class="time-val">{{ timeTogether.days }}</span>
+            <span class="time-lbl">Days</span>
+          </div>
+          <div class="time-divider">:</div>
+          <div class="time-box">
+            <span class="time-val">{{ timeTogether.hours }}</span>
+            <span class="time-lbl">Hours</span>
+          </div>
+          <div class="time-divider">:</div>
+          <div class="time-box">
+            <span class="time-val">{{ timeTogether.minutes }}</span>
+            <span class="time-lbl">Minutes</span>
+          </div>
+          <div class="time-divider">:</div>
+          <div class="time-box highlight-sec">
+            <span class="time-val">{{ timeTogether.seconds }}</span>
+            <span class="time-lbl">Seconds</span>
+          </div>
+        </div>
+
+        <p class="counter-footer">...miles may separate our cities, but not a single second can separate our hearts. 💕</p>
+      </div>
+
+      <!-- Interactive Romantic Love Music & Heartbeat Player -->
+      <div class="love-song-player-card">
+        <div class="song-player-left">
+          <button (click)="audio.toggleBgm()" class="btn-play-pause" [class.playing]="audio.isPlaying" title="Play / Pause Romantic Music">
+            <span *ngIf="audio.isPlaying" class="pause-icon">⏸️</span>
+            <span *ngIf="!audio.isPlaying" class="play-icon">▶️</span>
+          </button>
+          <div class="song-info">
+            <div class="song-badge-row">
+              <span class="music-wave-anim" *ngIf="audio.isPlaying">
+                <span></span><span></span><span></span><span></span>
+              </span>
+              <span class="song-tag">{{ audio.isPlaying ? 'Now Playing Love Song 💕' : 'Romantic Song Paused 🎵' }}</span>
+            </div>
+            <h4 class="song-title">{{ audio.currentTrackName }}</h4>
+          </div>
+        </div>
+
+        <div class="song-player-right">
+          <button (click)="audio.nextTrack()" class="btn-song-action" title="Switch to next romantic song">
+            <span>Next Song ⏭️</span>
+          </button>
+          
+          <button (click)="audio.toggleHeartbeat()" 
+                  class="btn-song-action btn-heartbeat" 
+                  [class.active]="audio.isHeartbeatPlaying"
+                  title="Listen to real heartbeat">
+            <span class="heart-pulse-icon" [class.beating]="audio.isHeartbeatPlaying">💓</span>
+            <span>{{ audio.isHeartbeatPlaying ? 'Dhadkan: 72 BPM' : 'Hear My Heartbeat' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Cosmic Love Compatibility Card -->
+      <div class="cosmic-match-card home-cosmic-card">
+        <div class="cosmic-glow"></div>
+        <div class="cosmic-header">
+          <span class="cosmic-star">🌟</span>
+          <h3>Our Cosmic Love Compatibility</h3>
+          <span class="cosmic-star">🌟</span>
+        </div>
+
+        <div class="couple-names-display">
+          <span class="partner-name font-flourish">{{ story.config.girlfriendName }}</span>
+          <span class="heart-connector">💖</span>
+          <span class="partner-name font-flourish">{{ story.config.boyfriendName }}</span>
+        </div>
+
+        <div class="cosmic-score-ring">
+          <span class="score-number font-serif">1000%</span>
+          <span class="score-label">Infinite Soulmate Match</span>
+        </div>
+
+        <div class="cosmic-stats-grid">
+          <div class="stat-pill">
+            <span class="stat-val">∞</span>
+            <span class="stat-name">Forehead Kisses</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-val">100%</span>
+            <span class="stat-name">Safe Haven</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-val">24/7</span>
+            <span class="stat-name">Adoration</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-val">Forever</span>
+            <span class="stat-name">Destiny</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Story Chapters Directory (Table of Contents) -->
+      <div class="story-chapters-directory">
+        <div class="directory-header">
+          <span class="directory-badge">📖 The Story of Us</span>
+          <h2 class="directory-title">Chapters of Our Love</h2>
+          <p class="directory-subtitle">Tap any chapter to step into our memories, letters, poetry, and love games:</p>
+        </div>
+
+        <div class="chapters-grid">
+          <ng-container *ngFor="let page of pagesList">
+            <div *ngIf="page.id !== 'home'"
+                 class="chapter-grid-card" 
+                 (click)="navigateToPage(page.id)">
+              <div class="card-top-row">
+                <span class="chapter-num-badge">{{ page.chapterLabel }}</span>
+                <span class="chapter-stat-badge" *ngIf="page.badge">{{ page.badge }}</span>
+              </div>
+              <div class="chapter-card-main">
+                <span class="chapter-card-icon">{{ page.icon }}</span>
+                <h3 class="chapter-card-title">{{ page.title }}</h3>
+                <p class="chapter-card-desc">{{ page.description }}</p>
+              </div>
+              <div class="chapter-card-footer">
+                <span class="read-chapter-btn">Open Chapter →</span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Hero Actions -->
+      <div class="hero-actions">
+        <button (click)="navigateToPage('memories')" class="btn btn-primary pulse-btn">
+          <span>🌹 Begin Our Story (Chapter 1)</span>
+        </button>
+        <button (click)="navigateToPage('proposal')" class="btn btn-secondary">
+          <span>💍 The Big Question</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 1: TIMELINE OF MEMORIES ================= -->
+  <section class="section memories-section" id="story" *ngIf="currentPage === 'memories'">
+    <div class="section-header">
+      <span class="section-tag font-script">Chapter One</span>
+      <h2 class="section-title">Our Beautiful Journey</h2>
+      <p class="section-desc">The little steps and magical milestones that led my heart to yours.</p>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-line"></div>
+
+      <div *ngFor="let m of story.milestones; let i = index; let isEven = even" 
+           class="timeline-item" 
+           [class.even]="isEven"
+           [class.odd]="!isEven">
+        
+        <div class="timeline-marker">
+          <span class="marker-emoji">{{ m.emoji }}</span>
+        </div>
+
+        <div class="timeline-card" (click)="openMilestone(m)">
+          <div class="card-date">{{ m.date }}</div>
+          <h3 class="card-title">{{ m.title }}</h3>
+          <p class="card-tagline">"{{ m.tagline }}"</p>
+          
+          <div *ngIf="m.image" class="card-image-wrap">
+            <img [src]="m.image" [alt]="m.title" (error)="onImageError($event)" loading="lazy" class="card-img">
+            <div class="card-overlay"><span>Tap to expand 🔍</span></div>
+          </div>
+
+          <p class="card-text">{{ m.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 2: REASONS WHY I LOVE YOU ================= -->
+  <section class="section reasons-section" id="reasons" *ngIf="currentPage === 'reasons'">
+    <div class="section-header">
+      <span class="section-tag font-script">Chapter Two</span>
+      <h2 class="section-title">Why My Heart Chose You</h2>
+      <p class="section-desc">There are thousands of reasons, but here are just a few that I carry with me every day.</p>
+    </div>
+
+    <div class="reasons-grid">
+      <div *ngFor="let r of story.loveReasons" 
+           class="reason-card" 
+           [class.active]="activeReasonId === r.id"
+           (click)="toggleReason(r.id)">
+        <div class="reason-icon-bubble">{{ r.icon }}</div>
+        <h3 class="reason-title">{{ r.title }}</h3>
+        <p class="reason-desc">{{ r.shortDesc }}</p>
+        
+        <div class="reason-expand-content" *ngIf="activeReasonId === r.id">
+          <div class="divider-line"></div>
+          <p class="reason-deep">{{ r.expandedNote }}</p>
+        </div>
+
+        <div class="tap-hint">
+          <span>{{ activeReasonId === r.id ? 'Tap to close ✕' : 'Read more 💖' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Sweet Notes Jar Feature -->
+    <div class="sweet-jar-container">
+      <div class="jar-card">
+        <div class="jar-graphic" [class.drawing]="isDrawingNote">
+          <span class="jar-emoji">🏺</span>
+          <span class="floating-hearts-jar">💖</span>
+        </div>
+        
+        <div class="jar-content">
+          <div class="jar-badge-wrap">
+            <span class="jar-count-badge">🌸 {{ story.sweetNotesJar.length }} Sweet Love Notes Inside</span>
+          </div>
+          <h3>The Sweet Love Jar</h3>
+          <p class="jar-subtitle">Whenever you need a reminder of how cherished and loved you are, draw a note:</p>
+
+          <div class="note-paper" [class.shake]="isDrawingNote">
+            <p class="font-script note-text">"{{ currentSweetNote }}"</p>
+          </div>
+
+          <div class="jar-actions">
+            <button (click)="drawSweetNote()" class="btn btn-secondary jar-btn" [disabled]="isDrawingNote">
+              <span>{{ isDrawingNote ? 'Unfolding a secret note...' : 'Draw Another Love Note 🌸' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 3: THE LOVE LETTERS & WHISPERS ================= -->
+  <section class="section letter-section" id="letter" *ngIf="currentPage === 'letters'">
+    <div class="section-header">
+      <span class="section-tag font-script">Chapter Three</span>
+      <h2 class="section-title">Letters From My Soul</h2>
+      <p class="section-desc">A collection of {{ story.loveLetters.length }} heartfelt letters written for you. Choose an envelope to unfold the words straight from my heart.</p>
+    </div>
+
+    <!-- Letter Category Filter -->
+    <div class="letter-category-filter">
+      <button class="cat-chip" 
+              [class.active]="selectedLetterCategory === 'all'" 
+              (click)="setLetterCategory('all')">
+        💌 All Letters ({{ story.loveLetters.length }})
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedLetterCategory === 'favorites'" 
+              (click)="setLetterCategory('favorites')">
+        ⭐ Saved Favorites ({{ favoriteLetterIds.length }})
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedLetterCategory === 'distance'" 
+              (click)="setLetterCategory('distance')">
+        ✈️ Distance & 24 Feb
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedLetterCategory === 'vows'" 
+              (click)="setLetterCategory('vows')">
+        💍 Proposal & Vows
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedLetterCategory === 'open-when'" 
+              (click)="setLetterCategory('open-when')">
+        🌙 Open When...
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedLetterCategory === 'moments'" 
+              (click)="setLetterCategory('moments')">
+        🌸 Daily Moments
+      </button>
+    </div>
+
+    <!-- Letter Selector Tabs / Envelopes -->
+    <div class="letters-nav-rack">
+      <button *ngFor="let l of filteredLetters" 
+              class="letter-tab-btn" 
+              [class.active]="selectedLetterId === l.id && isLetterOpen"
+              (click)="selectLetter(l.id)">
+        <span class="tab-badge">{{ l.badge }}</span>
+        <span class="tab-tag">{{ l.tag }} <span *ngIf="isLetterFavorited(l.id)" class="tab-fav-star">⭐</span></span>
+      </button>
+    </div>
+
+    <div class="envelope-wrapper">
+      <!-- Unopened Envelope View -->
+      <div class="envelope-closed" *ngIf="!isLetterOpen" (click)="toggleLetter()">
+        <div class="envelope-body">
+          <div class="envelope-flap"></div>
+          <div class="wax-seal" title="Click to break seal and read">
+            <span class="seal-icon">❤️</span>
+            <span class="seal-ring"></span>
+          </div>
+          <div class="envelope-address">
+            <span class="address-to font-script">For: {{ story.config.girlfriendName }}</span>
+            <span class="address-sub">{{ currentLetter.title }}</span>
+          </div>
+        </div>
+        <p class="click-to-open">Tap the wax seal to unfold this letter 💌</p>
+      </div>
+
+      <!-- Opened Letter View -->
+      <div class="letter-opened" *ngIf="isLetterOpen" id="letterParchment"
+           (touchstart)="onLetterTouchStart($event)"
+           (touchend)="onLetterTouchEnd($event)">
+        <div class="parchment-sheet">
+          <div class="parchment-top">
+            <div class="parchment-top-left">
+              <span class="letter-badge-indicator">{{ currentLetter.badge }}</span>
+              <span class="letter-tag-indicator">{{ currentLetter.tag }}</span>
+            </div>
+            
+            <div class="parchment-top-right">
+              <button (click)="toggleFavoriteLetter(currentLetter.id)" 
+                      class="nav-fav-btn" 
+                      [class.is-fav]="isLetterFavorited(currentLetter.id)" 
+                      title="Save to favorites">
+                <span>{{ isLetterFavorited(currentLetter.id) ? '❤️ Saved' : '🤍 Save' }}</span>
+              </button>
+              <span class="mobile-swipe-guide" aria-hidden="true">👈 Swipe 👉</span>
+              <button (click)="openPrevLetter()" class="nav-letter-arrow" title="Previous Letter">⬅️ Prev</button>
+              <button (click)="openNextLetter()" class="nav-letter-arrow" title="Next Letter">Next ➡️</button>
+              <button (click)="toggleLetter()" class="close-letter-btn" title="Fold letter">✕ Fold</button>
+            </div>
+          </div>
+
+          <div class="letter-header-decor">
+            <h4 class="letter-theme-title">{{ currentLetter.title }}</h4>
+            <div class="letter-ornament">❦ ❧</div>
+          </div>
+
+          <h3 class="letter-greeting font-flourish">
+            {{ currentLetter.greeting }}
+          </h3>
+
+          <div class="letter-paragraphs">
+            <p *ngFor="let para of currentLetter.paragraphs">
+              {{ para }}
+            </p>
+          </div>
+
+          <div class="letter-footer">
+            <p class="signoff-note font-script">{{ currentLetter.signoff }}</p>
+            <p class="signature font-flourish">{{ story.config.boyfriendName }}</p>
+          </div>
+
+          <!-- Bottom Letter Navigator -->
+          <div class="letter-bottom-nav">
+            <div class="bottom-nav-controls">
+              <button (click)="openPrevLetter()" class="btn-step-letter">⬅️ Previous Letter</button>
+              <span class="nav-count-indicator">{{ currentLetter.title }}</span>
+              <button (click)="openNextLetter()" class="btn-step-letter">Next Letter ➡️</button>
+            </div>
+            <div class="mini-letter-chips">
+              <button *ngFor="let l of story.loveLetters" 
+                      class="chip-btn"
+                      [class.chip-active]="selectedLetterId === l.id"
+                      (click)="selectLetter(l.id)">
+                {{ l.badge }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Romantic Love Whispers Banner -->
+    <div class="love-whispers-card">
+      <div class="whisper-header">
+        <span class="whisper-sparkle">✨</span>
+        <span class="whisper-label font-script">Endless Sweet Whispers</span>
+        <span class="whisper-sparkle">✨</span>
+      </div>
+      <p class="whisper-quote font-serif">
+        "I loved you yesterday, I love you still, I always have, I always will."
+      </p>
+      <div class="whisper-footer">
+        <span>Every beat of my heart is a love note dedicated to you.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 4: SHAYARI & GHAZAL-E-DIL ================= -->
+  <section class="section shayari-section" id="shayari" *ngIf="currentPage === 'shayari'">
+    <div class="section-header">
+      <span class="section-tag font-script">Chapter Four</span>
+      <h2 class="section-title">Shayari & Ghazal-e-Dil</h2>
+      <p class="section-desc">Soulful poetry from the deepest chambers of my heart, where every word sings your praise.</p>
+    </div>
+
+    <!-- Category Filter Chips -->
+    <div class="shayari-categories">
+      <button class="cat-chip" 
+              [class.active]="selectedShayariCategory === 'all'"
+              (click)="setShayariCategory('all')">
+        ✨ All Poetry (सभी)
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedShayariCategory === 'favorites'"
+              (click)="setShayariCategory('favorites')">
+        ⭐ Saved ({{ favoriteShayariIds.length }})
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedShayariCategory === 'distance'"
+              (click)="setShayariCategory('distance')">
+        ✈️ Dooriyan & 24 Feb (दूरियां)
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedShayariCategory === 'romantic'"
+              (click)="setShayariCategory('romantic')">
+        🌹 Romantic (इश्क़)
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedShayariCategory === 'soulful'"
+              (click)="setShayariCategory('soulful')">
+        🌙 Soulful (रूहानी)
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedShayariCategory === 'promise'"
+              (click)="setShayariCategory('promise')">
+        🤝 Promises (वादे)
+      </button>
+      <button class="cat-chip" 
+              [class.active]="selectedShayariCategory === 'sweet'"
+              (click)="setShayariCategory('sweet')">
+        🥰 Sweet & Playful (नटखट)
+      </button>
+    </div>
+
+    <!-- Shayari Cards Grid -->
+    <div class="shayari-grid">
+      <div *ngFor="let s of filteredShayaris" class="shayari-card">
+        <div class="shayari-card-top">
+          <span class="shayari-emoji">{{ s.emoji }}</span>
+          <span class="shayari-cat-badge font-script">{{ s.category }}</span>
+        </div>
+
+        <div class="shayari-verses">
+          <p *ngFor="let line of s.lines" class="verse-line font-serif">
+            {{ line }}
+          </p>
+        </div>
+
+        <div class="shayari-divider">
+          <span>❦</span>
+        </div>
+
+        <p class="shayari-meaning">
+          "{{ s.translation }}"
+        </p>
+
+        <div class="shayari-actions">
+          <button (click)="toggleFavoriteShayari(s.id)" 
+                  class="btn-shayari-fav" 
+                  [class.is-fav]="isShayariFavorited(s.id)" 
+                  title="Save to favorites">
+            <span>{{ isShayariFavorited(s.id) ? '❤️ Saved' : '🤍 Save' }}</span>
+          </button>
+          <button (click)="copyShayari(s)" class="btn-shayari-copy" title="Copy poetry">
+            <span>Copy Shayari</span>
+            <span>📋</span>
+          </button>
+          <button (click)="launchHeartBurst()" class="btn-shayari-heart" title="Send a heart">
+            <span>❤️</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 5: SWEET LOVE COUPONS ================= -->
+  <section class="section coupons-section" id="coupons" *ngIf="currentPage === 'coupons'">
+    <div class="section-header">
+      <span class="section-tag font-script">Chapter Five</span>
+      <h2 class="section-title">Redeemable Love Tokens</h2>
+      <p class="section-desc">Special golden tickets gifted just for you, {{ story.config.girlfriendName }}. Redeem them whenever you want!</p>
+    </div>
+
+    <div class="coupons-grid">
+      <div *ngFor="let c of story.coupons" 
+           class="coupon-ticket"
+           [class.redeemed]="c.isRedeemed">
+        
+        <div class="ticket-left">
+          <div class="ticket-icon">{{ c.icon }}</div>
+          <span class="ticket-code">{{ c.code }}</span>
+          <div class="ticket-punch-hole"></div>
+        </div>
+
+        <div class="ticket-center">
+          <div class="ticket-badge">VIP LOVE PASS</div>
+          <h3 class="ticket-title">{{ c.title }}</h3>
+          <p class="ticket-sub">{{ c.subtitle }}</p>
+          <div class="ticket-terms">
+            <span class="terms-label">Terms:</span> {{ c.terms }}
+          </div>
+        </div>
+
+        <div class="ticket-right">
+          <button *ngIf="!c.isRedeemed" 
+                  (click)="redeemCoupon(c)" 
+                  class="btn-redeem">
+            <span>Redeem</span>
+            <span>🎟️</span>
+          </button>
+
+          <div *ngIf="c.isRedeemed" class="redeemed-stamp">
+            <span>REDEEMED</span>
+            <span>WITH LOVE</span>
+            <span>❤️</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 6: ROMANTIC & FUNNY LOVE PLAYGROUND ================= -->
+  <section class="section playground-section" id="playground" *ngIf="currentPage === 'games'">
+    <div class="section-header">
+      <span class="section-tag font-script">Chapter Six</span>
+      <h2 class="section-title">Love Playground & Romance Arcade 🎡💖</h2>
+      <p class="section-desc">Because true love is full of goofy laughs, mischievous moments, games, and infinite affection!</p>
+    </div>
+
+    <div class="playground-grid">
+      <!-- Activity 1: Spin The Love Fortune Wheel -->
+      <div class="arcade-card wheel-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🎰</span>
+          <div class="header-texts">
+            <h3>Spin The Wheel of Love</h3>
+            <p>Will you win 100 kisses or make boyfriend dance on call? Spin to see!</p>
+          </div>
+        </div>
+
+        <div class="wheel-stage">
+          <div class="wheel-pointer">🔻</div>
+          <div class="love-wheel" 
+               [style.transform]="'rotate(' + wheelRotation + 'deg)'"
+               [class.spinning]="isSpinningWheel">
+            <div class="wheel-inner">
+              <div *ngFor="let opt of wheelOptions; let idx = index" 
+                   class="wheel-slice"
+                   [style.transform]="'rotate(' + (idx * 45) + 'deg)'">
+                <span class="slice-emoji">{{ opt.emoji }}</span>
+              </div>
+            </div>
+            <div class="wheel-center-peg">❤️</div>
+          </div>
+        </div>
+
+        <div class="wheel-controls">
+          <button (click)="spinLoveWheel()" class="btn btn-primary btn-spin" [disabled]="isSpinningWheel">
+            <span>{{ isSpinningWheel ? 'Spinning Destiny... ✨' : 'Spin For Love! 🎡' }}</span>
+          </button>
+        </div>
+
+        <!-- Wheel Result Announcement -->
+        <div *ngIf="wheelResult" class="wheel-result-banner">
+          <div class="result-badge">🎉 YOU WON! 🎁</div>
+          <h4 class="result-title">{{ wheelResult.label }}</h4>
+          <p class="result-desc">{{ wheelResult.desc }}</p>
+          <button (click)="spinLoveWheel()" class="btn-spin-again">Spin Again 🔄</button>
+        </div>
+      </div>
+
+      <!-- Activity 2: Virtual Distance Hug Charger -->
+      <div class="arcade-card hug-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🫂</span>
+          <div class="header-texts">
+            <h3>Long-Distance Virtual Hug Machine</h3>
+            <p>Press & hold to compress miles and send 1000% pure warmth!</p>
+          </div>
+        </div>
+
+        <div class="hug-machine-stage">
+          <div class="hug-heart-visual" 
+               [class.charging]="isChargingHug" 
+               [class.sent]="hugSent"
+               [style.transform]="'scale(' + (1 + hugProgress / 180) + ')'">
+            <span class="hug-emoji">{{ hugSent ? '🥰' : (isChargingHug ? '💓' : '🤗') }}</span>
+          </div>
+
+          <div class="hug-progress-wrap">
+            <div class="hug-progress-bar" [style.width]="hugProgress + '%'"></div>
+          </div>
+          <span class="hug-percent">{{ hugProgress }}% WARMTH</span>
+
+          <p class="hug-status-text">
+            {{ hugSent ? '🎉 Hug Delivered Safely Across The Miles! Direct to your heart!' : (isChargingHug ? 'Charging love particles... Hold on tight!' : 'Press & hold the button below until 100%') }}
+          </p>
+        </div>
+
+        <div class="hug-controls">
+          <button *ngIf="!hugSent"
+                  (mousedown)="startChargingHug()" 
+                  (mouseup)="stopChargingHug()"
+                  (mouseleave)="stopChargingHug()"
+                  (touchstart)="startChargingHug()"
+                  (touchend)="stopChargingHug()"
+                  (touchcancel)="stopChargingHug()"
+                  class="btn btn-primary btn-hold-hug">
+            <span>{{ isChargingHug ? 'Charging Hug... ❤️' : 'Press & Hold to Hug 🫂' }}</span>
+          </button>
+
+          <button *ngIf="hugSent" (click)="resetHug()" class="btn btn-secondary btn-hug-again">
+            <span>Send Another Hug 💖</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Activity 3: Emergency Girlfriend Drama Fixer -->
+      <div class="arcade-card drama-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🥺</span>
+          <div class="header-texts">
+            <h3>Emergency Drama & Mood Fixer</h3>
+            <p>Pouting or mad at boyfriend? Tap your emergency symptom:</p>
+          </div>
+        </div>
+
+        <div class="drama-tabs">
+          <button class="drama-tab-btn" 
+                  [class.active]="activeDramaTab === 'hangry'" 
+                  (click)="selectDrama('hangry')">
+            🍟 Hangry!
+          </button>
+          <button class="drama-tab-btn" 
+                  [class.active]="activeDramaTab === 'late_reply'" 
+                  (click)="selectDrama('late_reply')">
+            📱 Late Reply!
+          </button>
+          <button class="drama-tab-btn" 
+                  [class.active]="activeDramaTab === 'attention'" 
+                  (click)="selectDrama('attention')">
+            👀 Need Attention!
+          </button>
+          <button class="drama-tab-btn" 
+                  [class.active]="activeDramaTab === 'love_me'" 
+                  (click)="selectDrama('love_me')">
+            💕 Love Me?
+          </button>
+        </div>
+
+        <div class="drama-reaction-box" *ngIf="dramaSolutions[activeDramaTab]">
+          <div class="drama-badge">{{ dramaSolutions[activeDramaTab].badge }}</div>
+          <h4 class="drama-title">{{ dramaSolutions[activeDramaTab].title }}</h4>
+          <p class="drama-quote font-script">{{ dramaSolutions[activeDramaTab].quote }}</p>
+          <p class="drama-message">{{ dramaSolutions[activeDramaTab].message }}</p>
+        </div>
+      </div>
+
+      <!-- Activity 4: Funny & Romantic Couple Quiz -->
+      <div class="arcade-card quiz-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🧠</span>
+          <div class="header-texts">
+            <h3>The Fun Couple Truth Quiz</h3>
+            <p>Let's test our love story & silly secrets!</p>
+          </div>
+        </div>
+
+        <div class="quiz-questions-list">
+          <div *ngFor="let q of quizQuestions; let qIdx = index" class="quiz-item">
+            <h4 class="quiz-q-title">{{ qIdx + 1 }}. {{ q.q }}</h4>
+
+            <div class="quiz-options-grid" *ngIf="!q.answered">
+              <button *ngFor="let opt of q.options" 
+                      (click)="answerQuiz(qIdx, opt)" 
+                      class="btn-quiz-opt">
+                {{ opt.text }}
+              </button>
+            </div>
+
+            <div *ngIf="q.answered" class="quiz-feedback-box">
+              <span class="feedback-star">✨</span>
+              <span class="feedback-text">{{ q.selectedFeedback }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isQuizComplete" class="quiz-certified-box">
+          <div class="cert-ribbon">🏆 100% CERTIFIED SOULMATES 🏆</div>
+          <p>You two are officially the most adorably chaotic, deeply in love couple in this universe!</p>
+          <button (click)="resetQuiz()" class="btn-retake-quiz">Play Quiz Again 🔄</button>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 5: Boyfriend Excuse Generator ================= -->
+      <div class="arcade-card excuse-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🤖🎭</span>
+          <div class="header-texts">
+            <h3>Boyfriend's Silly Excuse Generator</h3>
+            <p>Catch him red-handed! Why was he late, daydreaming, or confused?</p>
+          </div>
+        </div>
+
+        <div class="excuse-cat-rack">
+          <button class="excuse-cat-btn" [class.active]="excuseCategory === 'late'" (click)="setExcuseCategory('late')">
+            📱 Late Reply
+          </button>
+          <button class="excuse-cat-btn" [class.active]="excuseCategory === 'confused'" (click)="setExcuseCategory('confused')">
+            🧠 Confused
+          </button>
+          <button class="excuse-cat-btn" [class.active]="excuseCategory === 'staring'" (click)="setExcuseCategory('staring')">
+            👀 Staring
+          </button>
+          <button class="excuse-cat-btn" [class.active]="excuseCategory === 'sleepy'" (click)="setExcuseCategory('sleepy')">
+            😴 Slept Early
+          </button>
+        </div>
+
+        <div class="excuse-display-box" *ngIf="currentExcuse">
+          <div class="excuse-status-pill">{{ currentExcuse.status }}</div>
+          <div class="excuse-emoji-burst">{{ currentExcuse.emoji }}</div>
+          <h4 class="excuse-quote font-script">"{{ currentExcuse.reason }}"</h4>
+          
+          <div class="excuse-penalty-box">
+            <span class="penalty-tag">🚨 MANDATORY BOYFRIEND PENALTY:</span>
+            <p class="penalty-text">{{ currentExcuse.penalty }}</p>
+          </div>
+        </div>
+
+        <div class="excuse-actions-row">
+          <button (click)="generateBoyfriendExcuse()" class="btn btn-secondary btn-reroll-excuse">
+            <span>Spin New Excuse 🎲</span>
+          </button>
+          <button (click)="pleadGuilty()" class="btn btn-primary btn-guilty">
+            <span>Plead Guilty! 🥺</span>
+          </button>
+          <button (click)="forgiveBoyfriend()" class="btn btn-accent btn-forgive">
+            <span>Forgive Him 💕</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 6: Love Dares & Romantic Truths ================= -->
+      <div class="arcade-card dare-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🎲🌶️</span>
+          <div class="header-texts">
+            <h3>Love Dares & Romantic Truths</h3>
+            <p>A spicy, fun long-distance Truth or Dare challenge!</p>
+          </div>
+        </div>
+
+        <div class="dare-mode-tabs">
+          <button class="dare-tab-btn" [class.active]="dareMode === 'dare_cute'" (click)="setDareMode('dare_cute')">
+            🌹 Sweet Dare
+          </button>
+          <button class="dare-tab-btn" [class.active]="dareMode === 'dare_funny'" (click)="setDareMode('dare_funny')">
+            😂 Funny Dare
+          </button>
+          <button class="dare-tab-btn" [class.active]="dareMode === 'truth'" (click)="setDareMode('truth')">
+            🤫 Romantic Truth
+          </button>
+        </div>
+
+        <div class="dare-flip-stage">
+          <div class="dare-card-item" [class.flipped]="isCardFlipped">
+            <div class="dare-card-inner">
+              <div class="dare-badge">{{ currentDareCard.badge }}</div>
+              <div class="dare-icon">{{ currentDareCard.emoji }}</div>
+              <h4 class="dare-title">{{ currentDareCard.title }}</h4>
+              <p class="dare-prompt">"{{ currentDareCard.prompt }}"</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dare-actions-row">
+          <button (click)="drawDareCard()" class="btn btn-secondary btn-draw-card">
+            <span>Draw Another Card 🃏</span>
+          </button>
+          <button (click)="completeDare()" class="btn btn-primary btn-complete-dare">
+            <span>Dare Completed! 🏆 ({{ dareCompletionCount }})</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 7: Who Is More Likely To...? ================= -->
+      <div class="arcade-card battle-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🏆👫</span>
+          <div class="header-texts">
+            <h3>Who Is More Likely To...?</h3>
+            <p>Question {{ battleIndex + 1 }} of {{ battleScenarios.length }} — Couple Reality Check!</p>
+          </div>
+        </div>
+
+        <div class="battle-stage" *ngIf="currentBattle">
+          <div class="battle-q-box">
+            <h4 class="battle-q-text">{{ currentBattle.q }}</h4>
+          </div>
+
+          <!-- Voting Buttons -->
+          <div class="battle-vote-row">
+            <button (click)="voteBattle('him')" 
+                    class="btn-vote-choice btn-vote-him" 
+                    [class.selected]="battleVotes[battleIndex] === 'him'">
+              <span class="vote-avatar">👦</span>
+              <span class="vote-label">Him! (Boyfriend)</span>
+              <span class="vote-percent" *ngIf="battleVotes[battleIndex]">{{ currentBattle.himPercent }}%</span>
+            </button>
+
+            <span class="vote-vs">VS</span>
+
+            <button (click)="voteBattle('her')" 
+                    class="btn-vote-choice btn-vote-her" 
+                    [class.selected]="battleVotes[battleIndex] === 'her'">
+              <span class="vote-avatar">👧</span>
+              <span class="vote-label">Her! (Girlfriend)</span>
+              <span class="vote-percent" *ngIf="battleVotes[battleIndex]">{{ currentBattle.herPercent }}%</span>
+            </button>
+          </div>
+
+          <!-- Commentary on Vote -->
+          <div class="battle-verdict-box" *ngIf="battleVotes[battleIndex]">
+            <span class="verdict-tag">📢 RELATIONSHIP VERDICT:</span>
+            <p class="verdict-text">{{ currentBattle.verdict }}</p>
+          </div>
+        </div>
+
+        <div class="battle-nav-row">
+          <button (click)="prevBattleScenario()" class="btn btn-secondary btn-nav-battle">
+            <span>⬅️ Previous</span>
+          </button>
+          <span class="battle-counter-tag">{{ battleIndex + 1 }} / {{ battleScenarios.length }}</span>
+          <button (click)="nextBattleScenario()" class="btn btn-secondary btn-nav-battle">
+            <span>Next Question ➡️</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 8: Love Compatibility Fingerprint Scanner ================= -->
+      <div class="arcade-card scanner-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">💖👆</span>
+          <div class="header-texts">
+            <h3>Soulmate Biometric Fingerprint Scanner</h3>
+            <p>Place your thumb on the glowing heart to measure your love compatibility!</p>
+          </div>
+        </div>
+
+        <div class="scanner-stage">
+          <div class="fingerprint-sensor" 
+               [class.scanning]="isFingerprintScanning" 
+               [class.scanned]="fingerprintResult"
+               (mousedown)="startFingerprintScan()"
+               (mouseup)="stopFingerprintScan()"
+               (mouseleave)="stopFingerprintScan()"
+               (touchstart)="startFingerprintScan()"
+               (touchend)="stopFingerprintScan()"
+               (touchcancel)="stopFingerprintScan()">
+            <div class="laser-beam" *ngIf="isFingerprintScanning"></div>
+            <div class="scanner-heart-icon">{{ fingerprintResult ? '💖' : (isFingerprintScanning ? '💓' : '👆') }}</div>
+            <span class="sensor-prompt">{{ fingerprintResult ? 'MATCH CONFIRMED!' : (isFingerprintScanning ? 'SCANNING SOUL...' : 'PRESS & HOLD THUMB') }}</span>
+          </div>
+
+          <div class="scanner-progress-track" *ngIf="isFingerprintScanning && !fingerprintResult">
+            <div class="scanner-progress-fill" [style.width]="fingerprintProgress + '%'"></div>
+          </div>
+          <span class="scan-pct-txt" *ngIf="isFingerprintScanning && !fingerprintResult">{{ fingerprintProgress }}% BIOMETRICS ANALYZED</span>
+
+          <!-- Scanner Result Card -->
+          <div class="scanner-result-box" *ngIf="fingerprintResult">
+            <div class="result-badge-pill">{{ fingerprintResult.badge }}</div>
+            <h4 class="result-score-title">COMPATIBILITY: <span class="gold-gradient-text">{{ fingerprintResult.score }}</span></h4>
+            <h5 class="result-match-title">{{ fingerprintResult.match }}</h5>
+            <p class="result-diag"><strong>Diagnosis:</strong> {{ fingerprintResult.diagnosis }}</p>
+            <p class="result-presc"><strong>Prescription:</strong> {{ fingerprintResult.prescription }}</p>
+            <button (click)="resetFingerprintScan()" class="btn-rescan">Scan Again 🔄</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 9: Catch The Flying Kisses Arcade ================= -->
+      <div class="arcade-card kiss-arcade-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">💋🎮</span>
+          <div class="header-texts">
+            <h3>Catch The Flying Kisses Arcade</h3>
+            <p>20-Second Mini-Game: Tap flying kisses & diamonds, dodge the onions!</p>
+          </div>
+        </div>
+
+        <!-- Pre-game lobby -->
+        <div class="kiss-game-lobby" *ngIf="!isKissGameActive && !kissGameFinished">
+          <div class="lobby-preview">
+            <span class="floating-preview-item">💋 +2</span>
+            <span class="floating-preview-item">💖 +1</span>
+            <span class="floating-preview-item">🌹 +3</span>
+            <span class="floating-preview-item">💍 +5</span>
+            <span class="floating-preview-item dodge">🧅 -2</span>
+          </div>
+          <p class="lobby-sub">Tap as many kisses as you can in 20 seconds! Boyfriend owes you whatever score you achieve in real kisses!</p>
+          <button (click)="startKissGame()" class="btn btn-primary btn-start-game pulse-btn">
+            <span>Start 20s Kiss Game! 🚀💋</span>
+          </button>
+        </div>
+
+        <!-- Active Game Arena -->
+        <div class="kiss-game-arena" *ngIf="isKissGameActive">
+          <div class="game-hud">
+            <div class="hud-item hud-score">Score: <strong>{{ kissGameScore }}</strong> 💋</div>
+            <div class="hud-item hud-timer" [class.urgent]="kissGameTimeLeft <= 5">⏳ {{ kissGameTimeLeft }}s</div>
+          </div>
+
+          <div class="game-playfield">
+            <div *ngFor="let k of spawnedKisses" 
+                 class="falling-kiss-target"
+                 [style.left]="k.x + '%'"
+                 [style.top]="k.y + '%'"
+                 (mousedown)="catchKiss(k, $event)"
+                 (touchstart)="catchKiss(k, $event)">
+              <span class="kiss-emoji">{{ k.emoji }}</span>
+              <span class="kiss-points-popup">{{ k.text }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Finished Screen -->
+        <div class="kiss-game-summary" *ngIf="kissGameFinished">
+          <div class="summary-trophy">🏆</div>
+          <h4 class="summary-score-txt">Final Score: <span class="gradient-text">{{ kissGameScore }} Kisses!</span></h4>
+          
+          <div class="reward-debt-card">
+            <div class="debt-header">📜 BOYFRIEND KISS CONTRACT:</div>
+            <p class="debt-body">
+              Boyfriend is officially legally indebted to deliver <strong>{{ kissGameScore }} forehead & cheek kisses</strong> 
+              the moment you meet again, with unlimited hugs included!
+            </p>
+          </div>
+
+          <div class="summary-actions">
+            <button (click)="startKissGame()" class="btn btn-primary">
+              <span>Play Again! 🔄</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 10: Romantic Bucket List Scratch Cards ================= -->
+      <div class="arcade-card bucket-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🎫</span>
+          <div class="header-texts">
+            <h3>Our Romantic Bucket List & Dreams</h3>
+            <p>Tap to reveal hidden couple adventures & seal them into our forever vows!</p>
+          </div>
+        </div>
+
+        <div class="bucket-list-grid">
+          <div *ngFor="let item of bucketListItems" 
+               class="bucket-item-card" 
+               [class.revealed]="item.revealed" 
+               [class.vowed]="item.completed"
+               (click)="revealBucketItem(item)">
+            <div class="card-scratch-cover" *ngIf="!item.revealed">
+              <span class="scratch-icon">✨</span>
+              <span class="scratch-prompt">Tap to Scratch & Reveal</span>
+            </div>
+
+            <div class="card-inner-dream" *ngIf="item.revealed">
+              <div class="dream-header">
+                <span class="dream-emoji">{{ item.emoji }}</span>
+                <span class="dream-badge">{{ item.badge }}</span>
+              </div>
+              <h4 class="dream-title">{{ item.title }}</h4>
+              <p class="dream-desc">{{ item.desc }}</p>
+              
+              <button (click)="$event.stopPropagation(); toggleBucketCompleted(item)" 
+                      class="btn-vow-toggle" 
+                      [class.vowed]="item.completed">
+                <span>{{ item.completed ? '💍 Sealed in Our Vows' : '💖 Seal as Vow' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 11: Magic Heart Fortune Cookie / Love Oracle ================= -->
+      <div class="arcade-card fortune-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🥠</span>
+          <div class="header-texts">
+            <h3>Magic Love Fortune Cookie & Oracle</h3>
+            <p>Crack open the sacred golden cookie to reveal our cosmic love prophecy!</p>
+          </div>
+        </div>
+
+        <div class="fortune-stage">
+          <div class="cookie-container" [class.cracked]="isCookieCracked" [class.cracking]="isCrackingCookie" (click)="crackFortuneCookie()">
+            <div class="fortune-cookie-model" [title]="isCookieCracked ? 'Cracked with love!' : 'Tap to crack open!'">
+              <span class="cookie-half left-half">🥠</span>
+              <span class="cookie-sparkle">✨</span>
+            </div>
+            <p class="cookie-instruction" *ngIf="!isCookieCracked">
+              {{ isCrackingCookie ? 'Cracking open with starlight... ✨' : '👉 Tap Cookie to Crack Open!' }}
+            </p>
+          </div>
+
+          <!-- Fortune Paper Slip (Revealed) -->
+          <div class="fortune-paper-slip" *ngIf="isCookieCracked">
+            <div class="slip-header">
+              <span class="slip-icon">{{ currentFortune.emoji }}</span>
+              <span class="slip-badge">{{ currentFortune.luckScore }}</span>
+            </div>
+            <h4 class="slip-title">{{ currentFortune.title }}</h4>
+            <p class="slip-text">"{{ currentFortune.fortune }}"</p>
+            <div class="slip-actions">
+              <button (click)="crackFortuneCookie()" class="btn btn-secondary btn-crack-another">
+                <span>Crack Another Cookie 🥠</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 12: Infinite Sweet Compliment Machine & Love Meter ================= -->
+      <div class="arcade-card compliment-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">💌</span>
+          <div class="header-texts">
+            <h3>Infinite Compliment Generator & Love Meter</h3>
+            <p>Charge the Boyfriend Adoration Meter to 1000% maximum overload!</p>
+          </div>
+        </div>
+
+        <div class="compliment-stage">
+          <!-- Love Meter Display -->
+          <div class="love-meter-wrap">
+            <div class="meter-info">
+              <span class="meter-label">⚡ Girlfriend Adoration Level:</span>
+              <span class="meter-score" [class.overloaded]="loveMeterPercent >= 1000">{{ loveMeterPercent }}% {{ loveMeterPercent >= 1000 ? '💥 CRITICAL OVERLOAD' : '❤️' }}</span>
+            </div>
+            <div class="meter-bar-track">
+              <div class="meter-bar-fill" [style.width]="(loveMeterPercent / 10) + '%'"></div>
+            </div>
+          </div>
+
+          <!-- Compliment Billboard -->
+          <div class="compliment-display-box">
+            <span class="compliment-quote-mark">“</span>
+            <p class="compliment-text">{{ currentCompliment }}</p>
+            <span class="compliment-author">— Yours Forever & Always ❤️</span>
+          </div>
+
+          <!-- Actions -->
+          <div class="compliment-controls">
+            <button (click)="generateCompliment()" class="btn btn-primary btn-generate-compliment">
+              <span>Generate New Compliment & Boost Meter! 🚀💖</span>
+            </button>
+            <button *ngIf="loveMeterPercent > 100" (click)="resetLoveMeter()" class="btn-reset-meter">
+              <span>Reset Meter 🔄</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 13: Boyfriend Apology & Penalty Generator ================= -->
+      <div class="arcade-card apology-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🥺</span>
+          <div class="header-texts">
+            <h3>Boyfriend Apology & Penalty Court</h3>
+            <p>Select what crime boyfriend committed and sentence him to sweet romantic penalties!</p>
+          </div>
+        </div>
+
+        <div class="apology-stage">
+          <!-- Crime Selector Chips -->
+          <div class="apology-selector-chips">
+            <button *ngFor="let k of apologyKeys"
+                    class="apology-chip"
+                    [class.active]="activeApologyReason === k"
+                    (click)="selectApologyReason(k)">
+              <span>{{ apologyScenarios[k].emoji }}</span>
+              <span>{{ apologyScenarios[k].label }}</span>
+            </button>
+          </div>
+
+          <!-- Confession & Sentence Parchment -->
+          <div class="apology-verdict-box" *ngIf="currentApology">
+            <div class="verdict-header">
+              <span class="verdict-stamp">⚖️ OFFICIAL APOLOGY</span>
+              <span class="verdict-emoji">{{ currentApology.emoji }}</span>
+            </div>
+            
+            <div class="verdict-confession">
+              <h4>Boyfriend's Plea & Confession:</h4>
+              <p>"{{ currentApology.confession }}"</p>
+            </div>
+
+            <div class="verdict-penalty">
+              <div class="penalty-title">📜 Court Ordered Sentence:</div>
+              <p class="penalty-text">{{ currentApology.penalty }}</p>
+              <p class="pledge-text">{{ currentApology.pledge }}</p>
+            </div>
+
+            <div class="verdict-actions">
+              <button (click)="forgiveBoyfriendApology()" 
+                      class="btn btn-primary btn-forgive-apology" 
+                      [disabled]="isBoyfriendForgiven">
+                <span>{{ isBoyfriendForgiven ? '❤️ Boyfriend Forgiven! Penalty Active!' : '🥺 Forgive Him & Impose Penalty! Hug Him' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 14: Our Virtual Love Blossom (Pyaar Ka Paudha) ================= -->
+      <div class="arcade-card plant-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🌱</span>
+          <div class="header-texts">
+            <h3>Virtual Love Blossom (प्यार का पौधा)</h3>
+            <p>Plant planted on 24 Feb 2026! Nurture it with water, sun, whispers and hugs to full bloom!</p>
+          </div>
+        </div>
+
+        <div class="plant-stage">
+          <!-- Plant Visual Graphic -->
+          <div class="plant-visual-box" [class.bloomed]="lovePlantCareLevel >= 100">
+            <div class="plant-avatar">
+              <span *ngIf="lovePlantStage === 0" class="plant-emoji stage-0">🌱</span>
+              <span *ngIf="lovePlantStage === 1" class="plant-emoji stage-1">🌿</span>
+              <span *ngIf="lovePlantStage === 2" class="plant-emoji stage-2">🌷</span>
+              <span *ngIf="lovePlantStage === 3" class="plant-emoji stage-3">🌹✨</span>
+            </div>
+            <div class="plant-pot">🪴</div>
+            <div class="plant-halo" *ngIf="lovePlantCareLevel >= 100"></div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="plant-progress-wrap">
+            <div class="progress-labels">
+              <span>Growth & Devotion:</span>
+              <span class="care-percent">{{ lovePlantCareLevel }}% {{ lovePlantCareLevel >= 100 ? '🌹 FULL BLOOM!' : '' }}</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" [style.width]="lovePlantCareLevel + '%'"></div>
+            </div>
+            <p class="plant-message-status">{{ plantCareMessage }}</p>
+          </div>
+
+          <!-- Care Buttons -->
+          <div class="plant-care-actions">
+            <button (click)="careForPlant('water')" class="btn-care water-btn" [disabled]="lovePlantCareLevel >= 100">
+              <span>💧 Water Daily</span>
+            </button>
+            <button (click)="careForPlant('sun')" class="btn-care sun-btn" [disabled]="lovePlantCareLevel >= 100">
+              <span>☀️ Golden Sun</span>
+            </button>
+            <button (click)="careForPlant('whisper')" class="btn-care whisper-btn" [disabled]="lovePlantCareLevel >= 100">
+              <span>💬 Sweet Words</span>
+            </button>
+            <button (click)="careForPlant('hug')" class="btn-care hug-btn" [disabled]="lovePlantCareLevel >= 100">
+              <span>🫂 Tight Hug</span>
+            </button>
+          </div>
+
+          <button *ngIf="lovePlantCareLevel >= 100" (click)="resetPlant()" class="btn-reset-plant">
+            <span>Plant Another Seed 🌱</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 15: Love Memory Match (Romantic Emoji Flip) ================= -->
+      <div class="arcade-card memory-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🃏</span>
+          <div class="header-texts">
+            <h3>Love Memory Match</h3>
+            <p>Find all 6 pairs of romantic symbols! Moves: {{ memoryMoves }} | Pairs: {{ memoryMatches }}/6</p>
+          </div>
+        </div>
+
+        <div class="memory-stage">
+          <div class="memory-grid">
+            <button *ngFor="let card of memoryCards; let idx = index" 
+                    class="memory-tile" 
+                    [class.flipped]="card.flipped" 
+                    [class.matched]="card.matched"
+                    (click)="flipMemoryCard(idx)">
+              <div class="memory-tile-inner">
+                <div class="tile-front">
+                  <span>💖</span>
+                </div>
+                <div class="tile-back">
+                  <span>{{ card.emoji }}</span>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <div *ngIf="isMemoryWon" class="memory-win-banner">
+            <span class="win-crown">👑</span>
+            <h4>Perfect Match Found!</h4>
+            <p>You matched every symbol in {{ memoryMoves }} moves! But the greatest match is You & Me! ❤️</p>
+            <button (click)="initMemoryGame()" class="btn btn-primary btn-play-again">Play Again 🔄</button>
+          </div>
+
+          <div class="memory-controls" *ngIf="!isMemoryWon">
+            <button (click)="initMemoryGame()" class="btn-reset-memory">
+              <span>Restart Game 🔄</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 16: Celestial Stargazer: Constellation of "US" ================= -->
+      <div class="arcade-card stargazer-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">🌌</span>
+          <div class="header-texts">
+            <h3>Celestial Stargazer: Constellation of "US"</h3>
+            <p>Look up into our private cosmos. Click any glowing star to reveal its eternal prophecy!</p>
+          </div>
+        </div>
+
+        <div class="stargazer-stage">
+          <!-- Cosmic Sky Map -->
+          <div class="celestial-sky">
+            <div class="star-nebula"></div>
+            <button *ngFor="let s of constellationStars"
+                    class="sky-star-btn"
+                    [class.active]="selectedConstellationStar?.id === s.id"
+                    [style.left]="s.x + '%'"
+                    [style.top]="s.y + '%'"
+                    (click)="selectConstellationStar(s)"
+                    [title]="s.name">
+              <span class="star-glow-ring"></span>
+              <span class="star-core">{{ s.icon }}</span>
+              <span class="star-label">{{ s.name }}</span>
+            </button>
+          </div>
+
+          <!-- Selected Star Prophecy Card -->
+          <div class="star-prophecy-box" *ngIf="selectedConstellationStar">
+            <div class="prophecy-top">
+              <span class="prophecy-icon">{{ selectedConstellationStar.icon }}</span>
+              <div>
+                <h4 class="prophecy-title">{{ selectedConstellationStar.name }}</h4>
+                <span class="prophecy-sub font-script">{{ selectedConstellationStar.subtitle }}</span>
+              </div>
+            </div>
+            <p class="prophecy-text font-serif">"{{ selectedConstellationStar.prophecy }}"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 17: Love Time Capsules ================= -->
+      <div class="arcade-card capsule-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">⏳</span>
+          <div class="header-texts">
+            <h3>Love Time Capsules To Our Future Self</h3>
+            <p>Sealed letters to our future milestones. Click any capsule to unlock the promise!</p>
+          </div>
+        </div>
+
+        <div class="capsule-stage">
+          <div class="capsule-grid">
+            <div *ngFor="let c of futureTimeCapsules" 
+                 class="capsule-box" 
+                 [class.unlocked]="c.unlocked"
+                 (click)="unlockTimeCapsule(c)">
+              <div class="capsule-head">
+                <span class="capsule-emoji">{{ c.emoji }}</span>
+                <span class="capsule-badge">{{ c.badge }}</span>
+              </div>
+              <h4 class="capsule-title">{{ c.title }}</h4>
+
+              <div class="capsule-content" *ngIf="c.unlocked">
+                <p class="capsule-vow font-serif">"{{ c.vow }}"</p>
+                <span class="sealed-stamp">❤️ PROMISED & SEALED</span>
+              </div>
+
+              <div class="capsule-lock" *ngIf="!c.unlocked">
+                <span class="lock-icon">🔒</span>
+                <span class="lock-hint">Tap to break future seal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ACTIVITY 18: Love Prescription Bottle ================= -->
+      <div class="arcade-card prescription-card">
+        <div class="arcade-card-header">
+          <span class="arcade-emoji">💊</span>
+          <div class="header-texts">
+            <h3>Love Prescription Bottle (Daily Dopamine)</h3>
+            <p>Dr. Boyfriend's 100% clinically proven cure for bad moods, distance, and missed hugs!</p>
+          </div>
+        </div>
+
+        <div class="prescription-stage">
+          <div class="pill-bottle-visual">
+            <div class="bottle-lid"></div>
+            <div class="bottle-body">
+              <span class="bottle-label font-script">Rx: For My Angel</span>
+              <span class="bottle-pill-anim" [class.popping]="isPoppingPill">💊</span>
+            </div>
+          </div>
+
+          <div class="pill-dispensed-box" *ngIf="currentPoppedPill">
+            <div class="pill-dose-tag">
+              <span>{{ currentPoppedPill.dose }}</span>
+            </div>
+            <p class="pill-message-text">"{{ currentPoppedPill.message }}"</p>
+            <div class="pill-side-effect">
+              <span>⚠️ {{ currentPoppedPill.sideEffect }}</span>
+            </div>
+          </div>
+
+          <div class="pill-controls">
+            <button (click)="popLovePill()" class="btn btn-primary btn-pop-pill" [disabled]="isPoppingPill">
+              <span>{{ isPoppingPill ? 'Dispensing Sweetness... ✨' : '💊 Pop Another Love Pill!' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER 7: THE BIG PROPOSAL QUESTION ================= -->
+  <section class="section proposal-section" id="proposal" #proposalSection *ngIf="currentPage === 'proposal'">
+    <div class="spotlight-effect"></div>
+
+    <div class="proposal-box" *ngIf="!proposalAnswered">
+      <div class="ring-box-closed">
+        <span class="box-icon">🎁</span>
+        <div class="ambient-glow"></div>
+      </div>
+
+      <div class="romantic-badge">
+        <span>The Final Question</span>
+      </div>
+
+      <h2 class="proposal-headline font-serif">
+        {{ story.config.proposalQuestion }}
+      </h2>
+
+      <p class="proposal-sub">
+        {{ story.config.proposalSubtitle }}
+      </p>
+
+      <!-- The Proposal Interactive Action Area -->
+      <div class="proposal-buttons-area">
+        <!-- The YES Button (Grows dynamically on No attempts!) -->
+        <button (click)="onSayYes()" 
+                class="btn-proposal btn-yes" 
+                [style.transform]="'scale(' + yesScale + ')'">
+          <span class="yes-heart">💖</span>
+          <span class="yes-text">YES! A Million Times YES!</span>
+          <span class="sparkle-ring"></span>
+        </button>
+
+        <!-- The Runaway NO Button -->
+        <button (mouseenter)="onNoHover($event)" 
+                (touchstart)="onNoHover($event)"
+                (click)="onNoClick($event)"
+                class="btn-proposal btn-no" 
+                [ngStyle]="noBtnStyle">
+          {{ currentNoText }}
+        </button>
+      </div>
+
+      <p class="no-escape-hint" *ngIf="noEscapeCount > 0">
+        {{ noEscapeCount > 3 ? 'Hint: My heart won\'t let you say no! 🥰' : 'Oops, that button seems a little shy... 😉' }}
+      </p>
+    </div>
+
+    <!-- ================= CELEBRATION VIEW: SHE SAID YES! ================= -->
+    <div class="celebration-view" *ngIf="proposalAnswered">
+      <div class="celebration-card">
+        <!-- 3D Open Ring Box -->
+        <div class="diamond-ring-display">
+          <div class="ring-sparkle-halo"></div>
+          <div class="sparkling-diamond">💎</div>
+          <div class="ring-band">💍</div>
+        </div>
+
+        <div class="celebration-badge font-script">
+          Forever & Always
+        </div>
+
+        <h1 class="celebration-title font-flourish gradient-text">
+          She Said YES! ❤️
+        </h1>
+
+        <p class="celebration-words">
+          You just made me the happiest person in the entire universe, <strong>{{ story.config.girlfriendName }}</strong>! 
+          This is not the end of a question, but the beginning of our sweetest forever.
+        </p>
+
+        <!-- Certificate of Eternal Love -->
+        <div class="love-certificate" id="certificate">
+          <div class="cert-border">
+            <div class="cert-header">
+              <span class="cert-seal">📜</span>
+              <h2>Certificate of Eternal Love</h2>
+              <div class="cert-gold-ribbon">⭐ OFFICIAL PLEDGE ⭐</div>
+            </div>
+
+            <p class="cert-body">
+              This confirms that on this magical day of <strong>{{ certDate | date:'fullDate' }}</strong>,
+              <br>
+              <strong class="cert-names font-flourish">{{ story.config.girlfriendName }} & {{ story.config.boyfriendName }}</strong>
+              <br>
+              have joyfully agreed to embark on a lifetime filled with unconditional love, 
+              endless adventures, sweet laughter, warm cuddles, and unwavering companionship.
+            </p>
+
+            <div class="cert-signatures">
+              <div class="cert-sig-block">
+                <span class="sig-line font-flourish">{{ story.config.girlfriendName }}</span>
+                <span class="sig-title">The Love of My Life</span>
+              </div>
+              <div class="cert-stamp">
+                <span>SEALED WITH LOVE</span>
+                <span>💍</span>
+              </div>
+              <div class="cert-sig-block">
+                <span class="sig-line font-flourish">{{ story.config.boyfriendName }}</span>
+                <span class="sig-title">Yours Forever</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Celebration Action Buttons -->
+        <div class="celebration-actions">
+          <button (click)="downloadCertificatePdf()" class="btn btn-primary pulse-btn" title="Download official PDF document">
+            <span>Download Official PDF 📄</span>
+          </button>
+          <button (click)="downloadCertificateImage()" class="btn btn-secondary" title="Save high-resolution image to photos">
+            <span>Save HD Image 🖼️</span>
+          </button>
+          <button (click)="printOrSaveCertificate()" class="btn btn-secondary" title="Print with connected printer">
+            <span>Print 🖨️</span>
+          </button>
+          <button (click)="copyCertificateText()" class="btn btn-accent" title="Copy pledge text to clipboard">
+            <span>Copy Official Pledge 📋</span>
+          </button>
+          <button (click)="launchHeartBurst()" class="btn btn-secondary">
+            <span>More Fireworks! 🎆</span>
+          </button>
+          <button (click)="copyShareLink()" class="btn btn-secondary">
+            <span>Share Love Link 💌</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAPTER PAGINATION NAVIGATION FOOTER ================= -->
+  <!-- Visible across all chapter pages to read like an interactive love storybook -->
+  <nav class="chapter-navigation-bar" *ngIf="currentPage !== 'home'" aria-label="Chapter Navigation">
+    <button *ngIf="prevPage" (click)="goToPrevPage()" class="btn-chapter-nav btn-prev-chapter" [title]="'Go to ' + prevPage.title">
+      <span class="chapter-nav-arrow">‹</span>
+      <div class="chapter-nav-text">
+        <span class="chapter-nav-sub">Previous Chapter</span>
+        <span class="chapter-nav-label">{{ prevPage.navTitle }}</span>
+      </div>
+    </button>
+
+    <button (click)="navigateToPage('home')" class="btn-chapter-nav btn-home-chapter" title="Back to All Chapters & Table of Contents">
+      <span class="chapter-nav-icon">🏡</span>
+      <div class="chapter-nav-text">
+        <span class="chapter-nav-sub">Index</span>
+        <span class="chapter-nav-label">All Chapters</span>
+      </div>
+    </button>
+
+    <button *ngIf="nextPage" (click)="goToNextPage()" class="btn-chapter-nav btn-next-chapter" [title]="'Go to ' + nextPage.title">
+      <div class="chapter-nav-text">
+        <span class="chapter-nav-sub">Next Chapter</span>
+        <span class="chapter-nav-label">{{ nextPage.navTitle }}</span>
+      </div>
+      <span class="chapter-nav-arrow">›</span>
+    </button>
+  </nav>
+</main>
+
+<!-- Floating Heart Shower & Heartbeat Quick Controller -->
+<div class="floating-fab-corner" aria-label="Love Actions">
+  <button (click)="triggerHeartShower()" class="fab-btn heart-shower-btn" title="Shower screen with love hearts">
+    <span class="fab-icon">🌧️💖</span>
+    <span class="fab-label">Rain of Hearts</span>
+  </button>
+  
+  <button (click)="audio.toggleHeartbeat()" 
+          class="fab-btn heartbeat-fab-btn" 
+          [class.active]="audio.isHeartbeatPlaying"
+          title="Listen to real-time heartbeat">
+    <span class="fab-icon" [class.pulsing]="audio.isHeartbeatPlaying">💓</span>
+    <span class="fab-label">{{ audio.isHeartbeatPlaying ? 'Dhadkan: 72 BPM' : 'Hear Heart' }}</span>
+  </button>
+</div>
+
+<!-- Footer -->
+<footer class="romantic-footer">
+  <p>Made with endless devotion for <span class="footer-gf font-script">{{ story.config.girlfriendName }}</span></p>
+  <p class="footer-sub">Written in the stars, cherished in reality.</p>
+  <div class="footer-tracker-wrap">
+    <button (click)="openTracker()" class="btn-footer-tracker" title="View what buttons were clicked and what entries were made">
+      <span>📊 View Activity & Click Tracker</span>
+      <span class="footer-tracker-badge">{{ tracker.logs.length }} actions</span>
+    </button>
+  </div>
+</footer>
+
+<!-- ================= MILESTONE DETAIL MODAL ================= -->
+<div class="modal-backdrop" *ngIf="selectedMilestone" (click)="closeMilestone()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="closeMilestone()">✕</button>
+    <div class="modal-emoji">{{ selectedMilestone.emoji }}</div>
+    <div class="modal-date">{{ selectedMilestone.date }}</div>
+    <h3 class="modal-title">{{ selectedMilestone.title }}</h3>
+    <h4 class="modal-tagline">"{{ selectedMilestone.tagline }}"</h4>
+    
+    <div *ngIf="selectedMilestone.image" class="modal-img-wrap">
+      <img [src]="selectedMilestone.image" [alt]="selectedMilestone.title" (error)="onImageError($event)" class="modal-img">
+    </div>
+
+    <p class="modal-desc">{{ selectedMilestone.description }}</p>
+  </div>
+</div>
+
+<!-- ================= CUSTOMIZER / PERSONALIZE MODAL ================= -->
+<div class="modal-backdrop" *ngIf="showCustomizer" (click)="showCustomizer = false">
+  <div class="modal-dialog customizer-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-header-title">
+        <span>⚙️</span>
+        <h3>Personalize Your Proposal Website</h3>
+      </div>
+      <button class="modal-close" (click)="showCustomizer = false">✕</button>
+    </div>
+
+    <div class="customizer-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Girlfriend's Name / Nickname</label>
+          <input type="text" [(ngModel)]="story.config.girlfriendName" placeholder="e.g. Sophia, My Love">
+        </div>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" [(ngModel)]="story.config.boyfriendName" placeholder="e.g. Alex, Yours Forever">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>The Day You Met / Anniversary</label>
+          <input type="date" [(ngModel)]="story.config.metDate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>The Big Proposal Question</label>
+        <textarea rows="2" [(ngModel)]="story.config.proposalQuestion" placeholder="Will you be my girlfriend...?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Love Letter Greeting</label>
+        <input type="text" [(ngModel)]="story.config.loveLetterGreeting">
+      </div>
+
+      <div class="form-group">
+        <label>Love Letter Message</label>
+        <textarea rows="5" [(ngModel)]="story.config.loveLetterBody"></textarea>
+      </div>
+
+      <div class="share-link-box">
+        <label>Special Direct Link For Her (includes names & date):</label>
+        <div class="link-input-group">
+          <input type="text" [value]="story.generateShareableUrl()" readonly class="readonly-link">
+          <button (click)="copyShareLink()" class="btn-copy">Copy Link</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="customizer-actions">
+      <button (click)="resetCustomizer()" class="btn-text-btn">Reset Defaults</button>
+      <button (click)="downloadCertificatePdf()" class="btn-text-btn" style="color: var(--accent-rose);">Download PDF Certificate 📄</button>
+      <button (click)="openTracker()" class="btn-text-btn" style="color: #60a5fa;">View Activity Tracker 📊</button>
+      <div class="right-actions">
+        <button (click)="showCustomizer = false" class="btn btn-secondary">Cancel</button>
+        <button (click)="saveAndCloseCustomizer()" class="btn btn-primary">Save Changes ❤️</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ACTIVITY & CLICK TRACKER MODAL ================= -->
+<div class="modal-backdrop tracker-backdrop" *ngIf="showTrackerModal" (click)="closeTracker()">
+  <div class="modal-dialog tracker-dialog" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="tracker-modal-header">
+      <div class="tracker-title-box">
+        <span class="tracker-header-icon">📊</span>
+        <div>
+          <h3 class="tracker-title">Love Story Activity & Entry Tracker</h3>
+          <p class="tracker-subtitle">Recorded timeline of what buttons were clicked & what entries were submitted</p>
+        </div>
+      </div>
+      <button class="modal-close" (click)="closeTracker()">✕</button>
+    </div>
+
+    <!-- Summary Stats Grid -->
+    <div class="tracker-stats-grid">
+      <div class="stat-card" [class.stat-card-highlight]="tracker.proposalStatus.includes('YES')">
+        <div class="stat-icon">💍</div>
+        <div class="stat-info">
+          <span class="stat-label">Proposal Status</span>
+          <span class="stat-value font-highlight">{{ tracker.proposalStatus }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🙈</div>
+        <div class="stat-info">
+          <span class="stat-label">'No' Evaded</span>
+          <span class="stat-value">{{ tracker.noAttemptsCount }} times</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💌</div>
+        <div class="stat-info">
+          <span class="stat-label">Letters Read</span>
+          <span class="stat-value">{{ tracker.lettersOpenedCount }} of {{ story.loveLetters.length }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🎟️</div>
+        <div class="stat-info">
+          <span class="stat-label">Coupons Used</span>
+          <span class="stat-value">{{ tracker.couponsRedeemedCount }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🎮</div>
+        <div class="stat-info">
+          <span class="stat-label">Games Played</span>
+          <span class="stat-value">{{ tracker.gamesPlayedCount }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">✏️</div>
+        <div class="stat-info">
+          <span class="stat-label">Entries Saved</span>
+          <span class="stat-value">{{ tracker.inputsCount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google Sheets Integration Card -->
+    <div class="gsheet-sync-card">
+      <div class="gsheet-header-row">
+        <div class="gsheet-title-group">
+          <span class="gsheet-logo-badge">📊</span>
+          <div>
+            <div class="gsheet-title-line">
+              <h4 class="gsheet-heading">Connected Google Sheet</h4>
+              <span class="gsheet-live-pill" [class.active]="tracker.webhookUrl">
+                {{ tracker.webhookUrl ? '⚡ Live Sync Active' : '📋 1-Click Paste Ready' }}
+              </span>
+            </div>
+            <p class="gsheet-desc">
+              Your Google Spreadsheet: 
+              <a [href]="tracker.googleSheetUrl" target="_blank" rel="noopener noreferrer" class="gsheet-link">
+                <code>1tUaj7q9J7yybEGtNE_NtEAolD3dLqZ2u3YyuZuaGyik</code> ↗
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <div class="gsheet-quick-actions">
+          <button (click)="copyAndOpenSheet()" class="gsheet-btn gsheet-btn-open" title="Copies data to clipboard and opens Google Sheet so you can simply press Ctrl+V in cell A1!">
+            <span>🚀 Copy & Open Sheet</span>
+          </button>
+          <button (click)="copyForGoogleSheets()" class="gsheet-btn gsheet-btn-paste" title="Copy tab-separated table data to clipboard">
+            <span>📋 Copy Rows</span>
+          </button>
+          <button (click)="downloadTrackerCsv()" class="gsheet-btn gsheet-btn-csv" title="Download .CSV file formatted for Google Sheets import">
+            <span>📥 Download CSV</span>
+          </button>
+          <button (click)="toggleRawTabularBox()" class="gsheet-btn gsheet-btn-raw" [class.btn-active]="showRawTabularBox" title="View or manually copy raw table data">
+            <span>👁️ View Table {{ showRawTabularBox ? '▲' : '▼' }}</span>
+          </button>
+          <button (click)="toggleWebhookSetup()" class="gsheet-btn gsheet-btn-webhook" [class.btn-active]="showWebhookSetup" title="Toggle automatic real-time live sync settings">
+            <span>⚡ Auto Live-Sync {{ showWebhookSetup ? '▲' : '▼' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Raw Tabular Text Drawer (for 100% reliable manual copy on any device) -->
+      <div class="gsheet-raw-drawer" *ngIf="showRawTabularBox">
+        <div class="raw-drawer-header">
+          <span class="raw-drawer-title">📋 Google Sheets Ready Data (Columns: ID, Date, Time, Category, Action, Details):</span>
+          <button (click)="copyForGoogleSheets()" class="raw-copy-btn">📋 Copy Table</button>
+        </div>
+        <textarea [value]="tracker.getTabularTsvContent()" readonly rows="6" class="raw-table-textarea" (click)="$any($event.target).select()"></textarea>
+        <p class="raw-tip">💡 <strong>Instant Paste:</strong> Is pure text ko copy karein aur apni Google Sheet me <strong>Cell A1</strong> select karke <strong>Ctrl + V</strong> daba dein! Saare columns automatically ban jayenge.</p>
+      </div>
+
+      <!-- Live Webhook Configuration Drawer -->
+      <div class="gsheet-webhook-drawer" *ngIf="showWebhookSetup">
+        <div class="webhook-drawer-inner">
+          <div class="webhook-input-section">
+            <label class="webhook-label">
+              <span>Google Apps Script Webhook URL (For Real-Time Automatic Row Insertion):</span>
+            </label>
+
+            <!-- Warning if user pasted Spreadsheet View link instead of Web App URL -->
+            <div *ngIf="tracker.isSpreadsheetDocUrl(webhookInputUrl)" class="webhook-url-warning">
+              ⚠️ <strong>Notice:</strong> Yeh aapki Google Sheet ka view/edit link hai! Auto-sync ke liye niche diye 30-sec steps follow karke <em>Web app URL</em> paste karein.
+            </div>
+
+            <div class="webhook-input-row">
+              <input type="url" 
+                     [(ngModel)]="webhookInputUrl" 
+                     placeholder="https://script.google.com/macros/s/.../exec"
+                     class="webhook-url-input">
+              <button (click)="saveWebhookUrl()" class="webhook-btn-save">
+                💾 Save URL
+              </button>
+              <button (click)="syncAllToGoogleSheet()" 
+                      [disabled]="isSyncingToSheet || !tracker.webhookUrl" 
+                      class="webhook-btn-sync-all">
+                <span>{{ isSyncingToSheet ? 'Syncing... ⏳' : '⚡ Sync All ' + tracker.logs.length + ' Logs Now' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Setup Guide -->
+          <div class="webhook-guide-box">
+            <div class="guide-header">
+              <span class="guide-badge">30-Second Setup for Automatic Live Sync</span>
+              <button (click)="copyAppsScriptCode()" class="guide-copy-code-btn">
+                📋 Copy Apps Script Code
+              </button>
+            </div>
+            <ol class="guide-steps">
+              <li>In your Google Sheet, click <strong>Extensions</strong> &gt; <strong>Apps Script</strong>.</li>
+              <li>Delete any existing code, paste the copied snippet, then click <strong>Save (💾)</strong>.</li>
+              <li>Click <strong>Deploy</strong> &gt; <strong>New deployment</strong> &gt; select <strong>Web app</strong> (Execute as: <em>Me</em>, Who has access: <em>Anyone</em>).</li>
+              <li>Click <strong>Deploy</strong>, copy the generated <em>Web app URL</em>, and paste it into the box above!</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Download & Export Actions Toolbar -->
+    <div class="tracker-actions-bar">
+      <div class="tracker-download-btns">
+        <button (click)="downloadTrackerText()" class="tracker-action-btn primary-export-btn" title="Download text report file for Notepad / sharing">
+          <span>📥 Download Report (.txt)</span>
+        </button>
+        <button (click)="downloadTrackerJson()" class="tracker-action-btn secondary-export-btn" title="Download raw JSON data file">
+          <span>📄 Download Data (.json)</span>
+        </button>
+        <button (click)="copyTrackerSummary()" class="tracker-action-btn copy-export-btn" title="Copy summary to clipboard">
+          <span>📋 Copy Summary</span>
+        </button>
+      </div>
+
+      <button (click)="clearTrackerLogs()" class="tracker-clear-btn" title="Clear all stored activity logs">
+        <span>🗑️ Clear History</span>
+      </button>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="tracker-filters">
+      <button (click)="setTrackerFilter('all')" [class.active]="trackerFilter === 'all'" class="filter-chip">
+        All ({{ tracker.logs.length }})
+      </button>
+      <button (click)="setTrackerFilter('proposal')" [class.active]="trackerFilter === 'proposal'" class="filter-chip">
+        💍 Proposal
+      </button>
+      <button (click)="setTrackerFilter('input')" [class.active]="trackerFilter === 'input'" class="filter-chip">
+        ✏️ Inputs / Entries
+      </button>
+      <button (click)="setTrackerFilter('game')" [class.active]="trackerFilter === 'game'" class="filter-chip">
+        🎡 Games
+      </button>
+      <button (click)="setTrackerFilter('letter')" [class.active]="trackerFilter === 'letter'" class="filter-chip">
+        💌 Letters
+      </button>
+      <button (click)="setTrackerFilter('coupon')" [class.active]="trackerFilter === 'coupon'" class="filter-chip">
+        🎟️ Coupons
+      </button>
+    </div>
+
+    <!-- Timeline Event Feed -->
+    <div class="tracker-logs-container">
+      <div *ngIf="filteredTrackerLogs.length === 0" class="tracker-empty">
+        <div class="empty-emoji">🕵️‍♂️</div>
+        <h4>No actions recorded yet</h4>
+        <p>Start clicking letters, playing games, or personalizing details to see them live here!</p>
+      </div>
+
+      <div class="timeline-feed" *ngIf="filteredTrackerLogs.length > 0">
+        <div *ngFor="let entry of filteredTrackerLogs" class="timeline-item" [attr.data-category]="entry.category">
+          <div class="timeline-indicator">
+            <span *ngIf="entry.category === 'proposal'">💍</span>
+            <span *ngIf="entry.category === 'input'">✏️</span>
+            <span *ngIf="entry.category === 'game'">🎮</span>
+            <span *ngIf="entry.category === 'letter'">💌</span>
+            <span *ngIf="entry.category === 'coupon'">🎟️</span>
+            <span *ngIf="entry.category === 'visit'">🌟</span>
+            <span *ngIf="entry.category === 'music'">🎵</span>
+          </div>
+
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-action">{{ entry.action }}</span>
+              <span class="timeline-timestamp">{{ entry.timeFormatted }} · {{ entry.dateFormatted }}</span>
+            </div>
+
+            <!-- Details Block if provided -->
+            <div *ngIf="entry.details" class="timeline-details">
+              <pre *ngIf="entry.details">{{ entry.details | json }}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= INSTALL APP INSTRUCTION MODAL ================= -->
+<div class="modal-backdrop" *ngIf="showInstallModal" (click)="closeInstallModal()">
+  <div class="modal-card install-modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-header-title">
+        <span class="modal-icon">📲</span>
+        <h3>Install "Our Love Story" as an App</h3>
+      </div>
+      <button (click)="closeInstallModal()" class="btn-close-modal">✕</button>
+    </div>
+
+    <div class="install-modal-body">
+      <div class="app-icon-preview">
+        <img src="assets/icons/icon.svg" alt="App Icon" class="preview-app-icon">
+        <div class="preview-meta">
+          <h4>Our Love Story ❤️</h4>
+          <p>By {{ story.config.boyfriendName }} & {{ story.config.girlfriendName }}</p>
+          <span class="pwa-tag">✨ Fullscreen • Fast • Works Offline</span>
+        </div>
+      </div>
+
+      <div class="install-instructions-list">
+        <div class="instruction-box android-box">
+          <div class="instruction-head">
+            <span class="platform-icon">🤖</span>
+            <h5>For Android (Chrome / Samsung Internet):</h5>
+          </div>
+          <ol>
+            <li>Tap the <strong>three dots (⋮)</strong> in the top right corner of your browser.</li>
+            <li>Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+            <li>Tap <strong>"Install"</strong> — and the app icon will appear directly on your home screen!</li>
+          </ol>
+        </div>
+
+        <div class="instruction-box ios-box">
+          <div class="instruction-head">
+            <span class="platform-icon">🍎</span>
+            <h5>For iPhone & iPad (Safari):</h5>
+          </div>
+          <ol>
+            <li>Tap the <strong>Share button (📤)</strong> at the bottom of Safari.</li>
+            <li>Scroll down and tap <strong>"Add to Home Screen (➕)"</strong>.</li>
+            <li>Tap <strong>"Add"</strong> in the top right corner — and enjoy fullscreen love anytime!</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="install-features-grid">
+        <div class="feature-item">
+          <span>🚫</span>
+          <p>No browser bars</p>
+        </div>
+        <div class="feature-item">
+          <span>⚡</span>
+          <p>Instant 1-tap open</p>
+        </div>
+        <div class="feature-item">
+          <span>🎵</span>
+          <p>Uninterrupted music</p>
+        </div>
+        <div class="feature-item">
+          <span>🔒</span>
+          <p>100% Private</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="closeInstallModal()" class="btn btn-primary btn-got-it">
+        <span>Got It! Open On My Phone 📱❤️</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="romantic-toast" *ngIf="showShareToast">
+  <span class="toast-heart">💌</span>
+  <span>{{ shareToastMsg }}</span>
+</div>
