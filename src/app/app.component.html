@@ -568,7 +568,15 @@
       </button>
     </div>
 
-    <div class="envelope-wrapper">
+    <!-- Empty State if Favorites is Empty -->
+    <div *ngIf="filteredLetters.length === 0" class="empty-fav-card">
+      <span class="empty-fav-icon">💌⭐</span>
+      <h4>No Saved Letters Yet</h4>
+      <p>Tap the <strong>"🤍 Save"</strong> button inside any letter to bookmark your favorite letters here!</p>
+      <button (click)="setLetterCategory('all')" class="btn btn-secondary btn-browse-all">Browse All Letters 💌</button>
+    </div>
+
+    <div class="envelope-wrapper" *ngIf="filteredLetters.length > 0">
       <!-- Unopened Envelope View -->
       <div class="envelope-closed" *ngIf="!isLetterOpen" (click)="toggleLetter()">
         <div class="envelope-body">
@@ -713,8 +721,16 @@
       </button>
     </div>
 
+    <!-- Empty State if Shayari Favorites is Empty -->
+    <div *ngIf="filteredShayaris.length === 0" class="empty-fav-card">
+      <span class="empty-fav-icon">📜⭐</span>
+      <h4>No Saved Poetry Yet</h4>
+      <p>Tap the <strong>"🤍 Save"</strong> button on any shayari card to keep your favorite verses here!</p>
+      <button (click)="setShayariCategory('all')" class="btn btn-secondary btn-browse-all">Browse All Poetry ✨</button>
+    </div>
+
     <!-- Shayari Cards Grid -->
-    <div class="shayari-grid">
+    <div class="shayari-grid" *ngIf="filteredShayaris.length > 0">
       <div *ngFor="let s of filteredShayaris" class="shayari-card">
         <div class="shayari-card-top">
           <span class="shayari-emoji">{{ s.emoji }}</span>

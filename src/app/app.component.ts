@@ -88,6 +88,10 @@ export class AppComponent implements OnInit, OnDestroy {
   public setLetterCategory(cat: 'all' | 'distance' | 'vows' | 'open-when' | 'moments' | 'favorites'): void {
     this.selectedLetterCategory = cat;
     this.audio.playTone(600, 0.15, 'sine', 0.08);
+    const list = this.filteredLetters;
+    if (list.length > 0 && !list.some(l => l.id === this.selectedLetterId)) {
+      this.selectedLetterId = list[0].id;
+    }
   }
 
   public toggleFavoriteLetter(id: string): void {
@@ -135,14 +139,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public openNextLetter(): void {
-    const list = this.story.loveLetters;
+    const list = this.filteredLetters.length > 0 ? this.filteredLetters : this.story.loveLetters;
     const currentIndex = list.findIndex(l => l.id === this.selectedLetterId);
     const nextIndex = (currentIndex + 1) % list.length;
     this.selectLetter(list[nextIndex].id, true);
   }
 
   public openPrevLetter(): void {
-    const list = this.story.loveLetters;
+    const list = this.filteredLetters.length > 0 ? this.filteredLetters : this.story.loveLetters;
     const currentIndex = list.findIndex(l => l.id === this.selectedLetterId);
     const prevIndex = (currentIndex - 1 + list.length) % list.length;
     this.selectLetter(list[prevIndex].id, true);
@@ -2703,11 +2707,31 @@ function recordEntry(data) {
     }
   }
 
+  private toastTimer: any = null;
+
   public showToast(msg: string): void {
     this.shareToastMsg = msg;
     this.showShareToast = true;
-    setTimeout(() => {
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
+    this.toastTimer = setTimeout(() => {
       this.showShareToast = false;
     }, 4000);
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscapeKey(): void {
+    if (this.showInstallModal) {
+      this.closeInstallModal();
+    } else if (this.showTrackerModal) {
+      this.closeTracker();
+    } else if (this.showCustomizer) {
+      this.showCustomizer = false;
+    } else if (this.selectedMilestone) {
+      this.closeMilestone();
+    } else if (this.isMobileMenuOpen) {
+      this.closeMobileMenu();
+    }
   }
 }
